@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>게시글 상세보기</title>
+    <style>
+        body {
+            background: #f5f6fa;
+            font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', Arial, sans-serif;
+        }
+        .view-container {
+            width: 640px;
+            margin: 44px auto 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 6px 24px rgba(36,60,100,0.10);
+            padding: 30px 34px 26px 34px;
+        }
+        h2 {
+            text-align: center;
+            color: #284179;
+            margin-bottom: 26px;
+            font-weight: 700;
+        }
+        .view-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 32px;
+        }
+        .view-table th, .view-table td {
+            border: 1.5px solid #dde7fa;
+            padding: 13px 12px;
+            text-align: left;
+        }
+        .view-table th {
+            background: #e9f2fd;
+            color: #365180;
+            width: 130px;
+            font-weight: 600;
+        }
+        .view-table td {
+            background: #fafcff;
+            color: #3d4962;
+        }
+        .view-table td:last-child {
+            min-height: 160px;
+        }
+
+        /* 댓글 영역 */
+        .comment-section {
+            margin-top: 38px;
+        }
+        .comment-section h3 {
+            font-size: 1.07em;
+            color: #24446e;
+            font-weight: 700;
+            margin-bottom: 17px;
+            letter-spacing: 0.2px;
+        }
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 18px 0;
+        }
+        .comment-list li {
+            padding: 13px 13px 8px 13px;
+            background: #f7faff;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #dde7fa;
+            position: relative;
+        }
+        .comment-writer {
+            color: #184870;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        .comment-meta {
+            color: #a7b2c4;
+            font-size: 0.97em;
+            margin-left: 9px;
+        }
+        .comment-content {
+            margin: 7px 0 0 0;
+            font-size: 1em;
+            color: #28304e;
+        }
+        /* 댓글 작성 폼 */
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+            background: #f6f8fc;
+            border-radius: 8px;
+            padding: 14px;
+            box-shadow: 0 2px 12px rgba(146,181,222,0.08);
+        }
+        .comment-form input[type="text"], .comment-form textarea {
+            padding: 10px 12px;
+            border: 1.5px solid #b0c4de;
+            border-radius: 6px;
+            font-size: 1em;
+            outline: none;
+            transition: border 0.16s;
+        }
+        .comment-form input[type="text"]:focus, .comment-form textarea:focus {
+            border: 1.5px solid #4682b4;
+        }
+        .comment-form textarea {
+            resize: vertical;
+            min-height: 38px;
+        }
+        .comment-form button[type="submit"] {
+            width: 100px;
+            background: #4682b4;
+            color: #fff;
+            font-weight: 600;
+            padding: 9px 0;
+            border: none;
+            border-radius: 7px;
+            font-size: 1em;
+            box-shadow: 0 2px 9px rgba(70,130,180,0.14);
+            transition: background 0.13s, box-shadow 0.17s;
+            cursor: pointer;
+            align-self: flex-end;
+        }
+        .comment-form button[type="submit"]:hover {
+            background: #224677;
+            box-shadow: 0 4px 18px rgba(70,130,180,0.19);
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 22px;
+            background: #b8cbe7;
+            color: #2a415e;
+            font-weight: 600;
+            padding: 10px 30px;
+            border-radius: 7px;
+            text-decoration: none;
+            transition: background 0.14s, color 0.14s;
+        }
+        .back-btn:hover {
+            background: #47669a;
+            color: #fff;
+        }
+        @media (max-width: 750px) {
+            .view-container { width: 99vw; padding: 2vw;}
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragment/header :: header"></div>
+<div class="view-container">
+    <h2>게시글 상세보기</h2>
+    <table class="view-table">
+        <tr>
+            <th>번호</th>
+            <td th:text="${board.id}"></td>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <td th:text="${board.title}"></td>
+        </tr>
+        <tr>
+            <th>작성자</th>
+            <td th:text="${board.writer}"></td>
+        </tr>
+        <tr>
+            <th>작성일</th>
+            <td th:text="${board.created_at}"></td>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <td th:text="${board.content}"></td>
+        </tr>
+    </table>
+
+    <!-- 댓글 영역 -->
+    <div class="comment-section">
+        <h3>댓글</h3>
+        <ul class="comment-list">
+            <li th:each="parent : ${parentComments}">
+                <span class="comment-writer" th:text="${parent.writer}"></span>
+                <span class="comment-meta" th:text="${parent.created_at}"></span>
+                <div class="comment-content" th:text="${parent.content}"></div>
+
+                <!-- 대댓글 리스트 (최대 1단계) -->
+                <ul class="comment-list" style="margin-left:24px;" th:if="${parent.children.size() > 0}">
+                    <li th:each="child : ${parent.children}">
+                        <span class="comment-writer" th:text="${child.writer}"></span>
+                        <span class="comment-meta" th:text="${child.created_at}"></span>
+                        <div class="comment-content" th:text="${child.content}"></div>
+                    </li>
+                </ul>
+
+                <!-- parent만 대댓글 폼 노출 -->
+                <form class="comment-form" th:action="@{/comment/write}" method="post" style="margin-left:24px;">
+                    <input type="hidden" name="board_id" th:value="${board.id}" />
+                    <input type="hidden" name="parentcomment_id" th:value="${parent.id}" />
+                    <input type="text" name="writer" th:value="${username}" readonly />
+                    <textarea name="content" placeholder="대댓글을 입력하세요." required></textarea>
+                    <button type="submit">대댓글 등록</button>
+                </form>
+            </li>
+        </ul>
+
+        <!-- 전체 댓글(부모) 등록 폼 -->
+        <form class="comment-form" th:action="@{/comment/write}" method="post" style="margin-top:28px;">
+            <input type="hidden" name="board_id" th:value="${board.id}" />
+            <input type="hidden" name="parentcomment_id" value="0" />
+            <input type="text" name="writer" th:value="${username}" readonly />
+            <textarea name="content" placeholder="댓글을 입력하세요." required></textarea>
+            <button type="submit">댓글 등록</button>
+        </form>
+
+    </div>
+    <a class="back-btn" th:href="@{/boardmain}">목록으로</a>
+</div>
+</body>
+</html>

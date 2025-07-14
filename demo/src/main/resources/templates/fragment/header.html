@@ -1,0 +1,49 @@
+<!-- header.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- (필요하면 CSS 등 포함) -->
+</head>
+<body>
+<!-- templates/fragment/header.html -->
+<div th:fragment="header">
+    <style>
+        .navbar {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 18px 42px;
+            background: linear-gradient(90deg, #dde7fa 0%, #cbe1fd 100%);
+            color: #283955;
+            font-size: 1.13em;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            box-shadow: 0 2px 13px rgba(38, 85, 160, 0.10);
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            margin-bottom: 34px;
+            display: flex;
+            align-items: center;
+            min-height: 54px;
+        }
+        .navbar span {
+            margin-left: auto;
+            font-size: 1.07em;
+            font-weight: 600;
+            color: #224677;
+            background: #f6f9ff;
+            padding: 7px 22px;
+            border-radius: 20px;
+            box-shadow: 0 1px 6px rgba(140,180,220,0.07);
+        }
+        @media (max-width: 650px) {
+            .navbar { padding: 12px 7vw; font-size: 1em; }
+            .navbar span { padding: 6px 12px; font-size: 1em;}
+        }
+    </style>
+    <div class="navbar">
+        <span th:if="${username}" th:text="${username} + '님 안녕하세요!'"></span>
+    </div>
+</div>
+
+</body>
+</html>
