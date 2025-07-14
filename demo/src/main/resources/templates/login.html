@@ -86,6 +86,13 @@
 <body>
 <div class="login-container">
     <h2>로그인</h2>
+
+    <div th:if="${param.error}" style="margin-bottom:18px;">
+        <div style="background: #ffe2e2; color: #bb2222; border-radius: 7px; border:1.5px solid #ffa0a0; font-size:1em; font-weight:600; padding:13px 0; text-align:center;">
+            아이디 또는 비밀번호가 올바르지 않습니다.
+        </div>
+    </div>
+
     <form th:action="@{/login}" method="post">
         <div>
             <label for="username">아이디</label>

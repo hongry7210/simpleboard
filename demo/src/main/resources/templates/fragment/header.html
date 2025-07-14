@@ -1,11 +1,10 @@
-<!-- header.html -->
+<!-- templates/fragment/header.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- (필요하면 CSS 등 포함) -->
 </head>
 <body>
-<!-- templates/fragment/header.html -->
 <div th:fragment="header">
     <style>
         .navbar {
@@ -25,8 +24,13 @@
             align-items: center;
             min-height: 54px;
         }
-        .navbar span {
+        .navbar .user-info {
             margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .navbar .username {
             font-size: 1.07em;
             font-weight: 600;
             color: #224677;
@@ -35,15 +39,36 @@
             border-radius: 20px;
             box-shadow: 0 1px 6px rgba(140,180,220,0.07);
         }
+        .navbar .logout-btn {
+            background: #f3a6a6;
+            color: #283955;
+            font-size: 1em;
+            border: none;
+            border-radius: 15px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            font-weight: 600;
+        }
+        .navbar .logout-btn:hover {
+            background: #e65050;
+            color: #fff;
+        }
         @media (max-width: 650px) {
             .navbar { padding: 12px 7vw; font-size: 1em; }
-            .navbar span { padding: 6px 12px; font-size: 1em;}
+            .navbar .username { padding: 6px 12px; font-size: 1em;}
+            .navbar .logout-btn { padding: 6px 12px; font-size: 0.98em;}
         }
     </style>
     <div class="navbar">
-        <span th:if="${username}" th:text="${username} + '님 안녕하세요!'"></span>
+        <div class="user-info" th:if="${username}">
+            <span class="username" th:text="${username} + '님 안녕하세요!'"></span>
+            <!-- 로그아웃 버튼 -->
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button class="logout-btn" type="submit">로그아웃</button>
+            </form>
+        </div>
     </div>
 </div>
-
 </body>
 </html>
