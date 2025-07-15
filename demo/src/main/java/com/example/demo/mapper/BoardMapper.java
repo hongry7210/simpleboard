@@ -13,4 +13,6 @@ public interface BoardMapper {
 
     // 글쓰기
     void insertBoard(BoardDTO board);
+
+    List<BoardDTO> findBoardsByWriter(String writer);
 }

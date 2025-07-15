@@ -8,4 +8,5 @@ import java.util.List;
 public interface CommentMapper {
     List<CommentDTO> selectCommentsByBoardId(int boardId);
     void insertComment(CommentDTO comment);
+    List<CommentDTO> findCommentsByWriter(String writer);
 }

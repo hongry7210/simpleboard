@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>회원 정보</title>
+    <style>
+        .profile-container { max-width: 580px; margin: 42px auto; background: #fff; border-radius: 13px; box-shadow: 0 4px 24px rgba(30,34,66,0.10); padding: 38px 34px;}
+        .profile-title { font-size: 1.35em; font-weight: 700; color: #284179; text-align: center; margin-bottom: 25px;}
+        .profile-info { margin-bottom: 34px;}
+        .profile-info dt { float: left; clear: left; width: 98px; color: #5681af; font-weight: 600; margin-bottom: 9px;}
+        .profile-info dd { margin-left: 120px; margin-bottom: 9px; color: #2e4058;}
+        .profile-table { width: 100%; margin-top: 16px; border-collapse: collapse;}
+        .profile-table th, .profile-table td { border: 1px solid #dde7fa; padding: 9px;}
+        .profile-table th { background: #f6f9ff;}
+        .change-pw-box { margin:32px 0 16px 0; padding:18px 18px 12px 18px; background: #f5f7fa; border-radius:8px; }
+        .change-pw-box h3 { margin-bottom: 13px; font-size:1.08em; color: #24446e; }
+        .change-pw-box input[type="password"] { margin-bottom:8px; width: 98%; padding:8px; border-radius:6px; border:1.5px solid #b0c4de; }
+        .change-pw-box button { background: #4682b4; color: #fff; border-radius: 7px; border: none; font-weight:600; padding: 9px 18px; cursor: pointer;}
+        .change-pw-box button:hover { background: #224677;}
+    </style>
+</head>
+<body>
+<div th:replace="fragment/header :: header"></div>
+<div class="profile-container">
+    <div class="profile-title">회원 정보</div>
+    <dl class="profile-info">
+        <dt>아이디</dt>
+        <dd th:text="${user.userid}"></dd>
+        <dt>이름</dt>
+        <dd th:text="${user.username}"></dd>
+    </dl>
+
+    <!-- 게시물 목록 -->
+    <h3 style="margin-bottom:9px; margin-top:27px; color:#24446e;">내가 쓴 게시글</h3>
+    <table class="profile-table">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일</th>
+        </tr>
+        <tr th:each="board : ${myBoards}">
+            <td th:text="${board.id}"></td>
+            <td>
+                <a th:href="@{/board/view(id=${board.id})}" th:text="${board.title}"></a>
+            </td>
+            <td th:text="${board.created_at}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(myBoards)}"><td colspan="3" style="color:#bbb; text-align:center;">작성한 게시글이 없습니다.</td></tr>
+    </table>
+
+    <!-- 댓글 목록 -->
+    <h3 style="margin-bottom:9px; margin-top:32px; color:#24446e;">내가 쓴 댓글</h3>
+    <table class="profile-table">
+        <tr>
+            <th>게시글 번호</th>
+            <th>댓글 내용</th>
+            <th>작성일</th>
+        </tr>
+        <tr th:each="comment : ${myComments}">
+            <td th:text="${comment.board_id}"></td>
+            <td th:text="${comment.content}"></td>
+            <td th:text="${comment.created_at}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(myComments)}"><td colspan="3" style="color:#bbb; text-align:center;">작성한 댓글이 없습니다.</td></tr>
+    </table>
+
+    <!-- 비밀번호 변경 폼 -->
+    <div class="change-pw-box">
+        <h3>비밀번호 변경</h3>
+        <input type="hidden" id="userid" th:value="${user.userid}">
+        <div>
+            <input type="password" id="oldpw" placeholder="현재 비밀번호" required>
+            <button type="button" id="checkpwBtn" onclick="checkPwAjax()">비밀번호 확인</button>
+            <span id="pwCheckMsg" style="color:red;"></span>
+        </div>
+        <div id="pw-change-form" style="display:none; margin-top:10px;">
+            <input type="password" id="newpw" placeholder="새 비밀번호" required>
+            <input type="password" id="newpw2" placeholder="새 비밀번호 확인" required>
+            <button type="button" onclick="changePwAjax()">비밀번호 변경</button>
+            <span id="pwMismatchMsg" style="color:red;"></span>
+            <span id="pwSuccessMsg" style="color:blue;"></span>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script>
+    function checkPwAjax() {
+    const userid = document.getElementById('userid').value;
+    const oldpw = document.getElementById('oldpw').value;
+
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+
+    fetch('/user/checkpw-ajax', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+    },
+    body: JSON.stringify({userid: userid, oldpw: oldpw})
+    })
+    .then(res => res.json())
+    .then(data => {
+        const msg = document.getElementById('pwCheckMsg');
+        if (data.result === 'ok') {
+            msg.style.color = "blue";
+            msg.innerText = "비밀번호가 일치합니다.";
+            document.getElementById('pw-change-form').style.display = "block";
+            const oldpwInput = document.getElementById('oldpw');
+            document.getElementById('oldpw').readOnly = true;
+            oldpwInput.style.background = "#eee";  // 회색 배경 적용
+        } else {
+            msg.style.color = "red";
+            msg.innerText = data.msg || "비밀번호가 틀립니다.";
+            document.getElementById('pw-change-form').style.display = "none";
+        }
+    });
+}
+
+function changePwAjax() {
+    const userid = document.getElementById('userid').value;
+    const newpw = document.getElementById('newpw').value;
+    const newpw2 = document.getElementById('newpw2').value;
+
+    const mismatchMsg = document.getElementById('pwMismatchMsg');
+    const successMsg = document.getElementById('pwSuccessMsg');
+    mismatchMsg.innerText = "";
+    successMsg.innerText = "";
+
+    if (newpw !== newpw2) {
+        mismatchMsg.innerText = "새 비밀번호가 일치하지 않습니다!";
+        return;
+    }
+
+    // CSRF 토큰, 헤더 값 읽어오기
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+    fetch('/user/changepw-ajax', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken // <- 이 한 줄 꼭 추가!
+        },
+        body: JSON.stringify({userid: userid, newpw: newpw})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.result === 'ok') {
+            successMsg.innerText = "비밀번호가 성공적으로 변경되었습니다.";
+             setTimeout(() => {
+                    window.location.href = "/user/modify";
+             }, 200); // 0.2초 후 이동
+        } else {
+            mismatchMsg.innerText = data.msg || "비밀번호 변경 실패";
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>

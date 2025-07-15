@@ -62,7 +62,7 @@
     </style>
     <div class="navbar">
         <div class="user-info" th:if="${username}">
-            <span class="username" th:text="${username} + '님 안녕하세요!'"></span>
+            <a th:if="${username}" th:text="${username} + '님 안녕하세요!'" th:href="@{/user/modify}"></a>
             <!-- 로그아웃 버튼 -->
             <form th:action="@{/logout}" method="post" style="display:inline;">
                 <button class="logout-btn" type="submit">로그아웃</button>

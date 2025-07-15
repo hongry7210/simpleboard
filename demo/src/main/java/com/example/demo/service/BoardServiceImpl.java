@@ -26,4 +26,8 @@ public class BoardServiceImpl implements BoardService {
         boardMapper.insertBoard(board);
     }
 
+    @Override
+    public List<BoardDTO> getBoardsByWriter(String writer) {
+        return boardMapper.findBoardsByWriter(writer);
+    }
 }

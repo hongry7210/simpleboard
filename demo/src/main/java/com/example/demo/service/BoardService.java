@@ -12,4 +12,5 @@ public interface BoardService {
     // 글쓰기
     void insertBoard(BoardDTO board);
 
+    List<BoardDTO> getBoardsByWriter(String writer);
 }

@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.CommentDTO;
 import com.example.demo.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,5 +22,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void insertComment(CommentDTO comment) {
         commentMapper.insertComment(comment);
+    }
+
+    @Override
+    public List<CommentDTO> getCommentsByWriter(String writer) {
+        return commentMapper.findCommentsByWriter(writer);
     }
 }

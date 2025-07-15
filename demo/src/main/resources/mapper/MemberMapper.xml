@@ -14,4 +14,9 @@
         FROM user
         WHERE userid = #{userid}
     </select>
+
+    <update id="updatePassword" parameterType="com.example.demo.dto.MemberDTO">
+        UPDATE user SET userpass = #{userpass} WHERE userid = #{userid}
+    </update>
+
 </mapper>

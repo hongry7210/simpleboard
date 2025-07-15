@@ -21,4 +21,11 @@
         WHERE id = #{id}
     </select>
 
+    <select id="findBoardsByWriter" resultType="com.example.demo.dto.BoardDTO">
+        SELECT *
+        FROM board
+        WHERE writer = #{writer}
+        ORDER BY created_at DESC
+    </select>
+
 </mapper>

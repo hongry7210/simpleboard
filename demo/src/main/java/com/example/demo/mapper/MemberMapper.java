@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface MemberMapper {
     boolean save(MemberDTO member);
     MemberDTO findUserById(String userid);
+    void updatePassword(MemberDTO member);
 }

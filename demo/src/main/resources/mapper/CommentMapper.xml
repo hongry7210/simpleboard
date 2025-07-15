@@ -17,4 +17,11 @@
         VALUES (#{board_id}, #{writer}, #{content}, NOW(), #{parentcomment_id})
     </insert>
 
+    <select id="findCommentsByWriter" resultType="com.example.demo.dto.CommentDTO">
+        SELECT *
+        FROM comment
+        WHERE writer = #{writer}
+        ORDER BY created_at DESC
+    </select>
+
 </mapper>

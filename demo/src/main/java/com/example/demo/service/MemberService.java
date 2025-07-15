@@ -26,6 +26,8 @@ public class MemberService {
         return mm.findUserById(userid);
     }
 
-
+    public void updatePassword(MemberDTO member) {
+        mm.updatePassword(member); // member에는 userid, userpass 세팅
+    }
 
 }
