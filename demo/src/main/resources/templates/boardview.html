@@ -5,22 +5,141 @@
     <title>게시글 상세보기</title>
     <style>
         body {
-            background: #f5f6fa;
+            background: #f7f8fa;
             font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', Arial, sans-serif;
         }
         .view-container {
-            width: 640px;
-            margin: 44px auto 0 auto;
+            max-width: 620px;
+            margin: 50px auto 0 auto;
             background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 6px 24px rgba(36,60,100,0.10);
-            padding: 30px 34px 26px 34px;
+            border-radius: 11px;
+            box-shadow: 0 3px 18px rgba(36,60,100,0.09);
+            padding: 32px 28px 30px 28px;
         }
         h2 {
             text-align: center;
             color: #284179;
-            margin-bottom: 26px;
+            margin-bottom: 30px;
             font-weight: 700;
+            font-size: 1.5em;
+        }
+        /* --- 댓글 섹션 --- */
+        .comment-section {
+            margin-top: 45px;
+        }
+        .comment-title {
+            font-weight: 700;
+            font-size: 1.05em;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+        .comment-list li {
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 1px solid #e4e7ee;
+            padding: 20px 0 14px 0;
+        }
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            background: #e4e9f2;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.12em;
+            color: #5a678b;
+        }
+        .comment-body {
+            flex: 1;
+        }
+        .comment-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 3px;
+        }
+        .comment-writer {
+            font-weight: 600;
+            color: #254380;
+        }
+        .comment-meta {
+            color: #b4b9c4;
+            font-size: 0.98em;
+        }
+        .comment-content {
+            color: #2b2f37;
+            font-size: 1.06em;
+            line-height: 1.5;
+            margin-bottom: 6px;
+            margin-top: 2px;
+            white-space: pre-line;
+        }
+        .reply-btn {
+            background: none;
+            border: none;
+            color: #6186d5;
+            font-size: 0.98em;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 2px;
+        }
+        .reply-btn:hover {
+            text-decoration: underline;
+        }
+        /* 대댓글 */
+        .comment-list .comment-replies {
+            margin-left: 50px;
+            margin-top: 6px;
+        }
+        /* --- 댓글/대댓글 폼 --- */
+        .comment-form {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            padding: 18px 0 0 0;
+            border-top: 1.5px solid #e8eaf3;
+        }
+        .comment-form input[type="text"], .comment-form textarea {
+            width: 100%;
+            border: 1.2px solid #c2c6d6;
+            border-radius: 6px;
+            font-size: 1em;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+        }
+        .comment-form textarea {
+            min-height: 38px;
+            resize: vertical;
+        }
+        .comment-form input[readonly] {
+            background: #f4f6fa;
+            color: #98a3b6;
+        }
+        .comment-form button {
+            align-self: flex-end;
+            background: #446ee9;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 32px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+        .comment-form button:hover {
+            background: #224677;
         }
         .view-table {
             width: 100%;
@@ -44,108 +163,6 @@
         }
         .view-table td:last-child {
             min-height: 160px;
-        }
-
-        /* 댓글 영역 */
-        .comment-section {
-            margin-top: 38px;
-        }
-        .comment-section h3 {
-            font-size: 1.07em;
-            color: #24446e;
-            font-weight: 700;
-            margin-bottom: 17px;
-            letter-spacing: 0.2px;
-        }
-        .comment-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 18px 0;
-        }
-        .comment-list li {
-            padding: 13px 13px 8px 13px;
-            background: #f7faff;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #dde7fa;
-            position: relative;
-        }
-        .comment-writer {
-            color: #184870;
-            font-weight: 600;
-            font-size: 1em;
-        }
-        .comment-meta {
-            color: #a7b2c4;
-            font-size: 0.97em;
-            margin-left: 9px;
-        }
-        .comment-content {
-            margin: 7px 0 0 0;
-            font-size: 1em;
-            color: #28304e;
-        }
-        /* 댓글 작성 폼 */
-        .comment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 14px;
-            background: #f6f8fc;
-            border-radius: 8px;
-            padding: 14px;
-            box-shadow: 0 2px 12px rgba(146,181,222,0.08);
-        }
-        .comment-form input[type="text"], .comment-form textarea {
-            padding: 10px 12px;
-            border: 1.5px solid #b0c4de;
-            border-radius: 6px;
-            font-size: 1em;
-            outline: none;
-            transition: border 0.16s;
-        }
-        .comment-form input[type="text"]:focus, .comment-form textarea:focus {
-            border: 1.5px solid #4682b4;
-        }
-        .comment-form textarea {
-            resize: vertical;
-            min-height: 38px;
-        }
-        .comment-form button[type="submit"] {
-            width: 100px;
-            background: #4682b4;
-            color: #fff;
-            font-weight: 600;
-            padding: 9px 0;
-            border: none;
-            border-radius: 7px;
-            font-size: 1em;
-            box-shadow: 0 2px 9px rgba(70,130,180,0.14);
-            transition: background 0.13s, box-shadow 0.17s;
-            cursor: pointer;
-            align-self: flex-end;
-        }
-        .comment-form button[type="submit"]:hover {
-            background: #224677;
-            box-shadow: 0 4px 18px rgba(70,130,180,0.19);
-        }
-        .back-btn {
-            display: inline-block;
-            margin-top: 22px;
-            background: #b8cbe7;
-            color: #2a415e;
-            font-weight: 600;
-            padding: 10px 30px;
-            border-radius: 7px;
-            text-decoration: none;
-            transition: background 0.14s, color 0.14s;
-        }
-        .back-btn:hover {
-            background: #47669a;
-            color: #fff;
-        }
-        @media (max-width: 750px) {
-            .view-container { width: 99vw; padding: 2vw;}
         }
     </style>
 </head>
@@ -178,42 +195,53 @@
 
     <!-- 댓글 영역 -->
     <div class="comment-section">
-        <h3>댓글</h3>
+        <div class="comment-title">댓글</div>
         <ul class="comment-list">
+            <!-- 부모 댓글 -->
             <li th:each="parent : ${parentComments}">
-                <span class="comment-writer" th:text="${parent.writer}"></span>
-                <span class="comment-meta" th:text="${parent.created_at}"></span>
-                <div class="comment-content" th:text="${parent.content}"></div>
+                <div class="comment-avatar" th:text="${#strings.substring(parent.writer,0,1)}"></div>
+                <div class="comment-body">
+                    <div class="comment-head">
+                        <span class="comment-writer" th:text="${parent.writer}"></span>
+                        <span class="comment-meta" th:text="${parent.created_at}"></span>
+                    </div>
+                    <div class="comment-content" th:text="${parent.content}"></div>
+                    <!-- 대댓글 작성 버튼 (선택) -->
+                    <!-- <button class="reply-btn">답글 달기</button> -->
 
-                <!-- 대댓글 리스트 (최대 1단계) -->
-                <ul class="comment-list" style="margin-left:24px;" th:if="${parent.children.size() > 0}">
-                    <li th:each="child : ${parent.children}">
-                        <span class="comment-writer" th:text="${child.writer}"></span>
-                        <span class="comment-meta" th:text="${child.created_at}"></span>
-                        <div class="comment-content" th:text="${child.content}"></div>
-                    </li>
-                </ul>
+                    <!-- 대댓글 리스트 -->
+                    <ul class="comment-list comment-replies" th:if="${parent.children.size() > 0}">
+                        <li th:each="child : ${parent.children}">
+                            <div class="comment-avatar" th:text="${#strings.substring(child.writer,0,1)}"></div>
+                            <div class="comment-body">
+                                <div class="comment-head">
+                                    <span class="comment-writer" th:text="${child.writer}"></span>
+                                    <span class="comment-meta" th:text="${child.created_at}"></span>
+                                </div>
+                                <div class="comment-content" th:text="${child.content}"></div>
+                            </div>
+                        </li>
+                    </ul>
 
-                <!-- parent만 대댓글 폼 노출 -->
-                <form class="comment-form" th:action="@{/comment/write}" method="post" style="margin-left:24px;">
-                    <input type="hidden" name="board_id" th:value="${board.id}" />
-                    <input type="hidden" name="parentcomment_id" th:value="${parent.id}" />
-                    <input type="text" name="writer" th:value="${username}" readonly />
-                    <textarea name="content" placeholder="대댓글을 입력하세요." required></textarea>
-                    <button type="submit">대댓글 등록</button>
-                </form>
+                    <!-- 대댓글 작성 폼 (parent만 노출) -->
+                    <form class="comment-form" th:action="@{/comment/write}" method="post">
+                        <input type="hidden" name="board_id" th:value="${board.id}" />
+                        <input type="hidden" name="parentcomment_id" th:value="${parent.id}" />
+                        <input type="text" name="writer" th:value="${username}" readonly />
+                        <textarea name="content" placeholder="대댓글을 입력하세요." required></textarea>
+                        <button type="submit">대댓글 등록</button>
+                    </form>
+                </div>
             </li>
         </ul>
-
-        <!-- 전체 댓글(부모) 등록 폼 -->
-        <form class="comment-form" th:action="@{/comment/write}" method="post" style="margin-top:28px;">
+        <!-- 부모 댓글 작성 폼 -->
+        <form class="comment-form" th:action="@{/comment/write}" method="post">
             <input type="hidden" name="board_id" th:value="${board.id}" />
             <input type="hidden" name="parentcomment_id" value="0" />
             <input type="text" name="writer" th:value="${username}" readonly />
             <textarea name="content" placeholder="댓글을 입력하세요." required></textarea>
             <button type="submit">댓글 등록</button>
         </form>
-
     </div>
     <a class="back-btn" th:href="@{/boardmain}">목록으로</a>
 </div>
