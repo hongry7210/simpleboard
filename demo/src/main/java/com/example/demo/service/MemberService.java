@@ -37,4 +37,8 @@ public class MemberService {
         return mm.findUsernamesByPartial(query);
     }
 
+    public MemberDTO findUserByUsername(String username) {
+        return mm.findUserByUsername(username);
+    }
+
 }

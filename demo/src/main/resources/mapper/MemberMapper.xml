@@ -23,4 +23,11 @@
         SELECT username FROM user WHERE username LIKE CONCAT('%', #{query}, '%') LIMIT 20
     </select>
 
+    <select id="findUserByUsername" parameterType="String" resultType="com.example.demo.dto.MemberDTO">
+        SELECT *
+        FROM user
+        WHERE username = #{username}
+        LIMIT 1
+    </select>
+
 </mapper>

@@ -108,4 +108,15 @@ public class MemberController {
     public List<String> searchUsernames(@RequestParam String query) {
         return ms.findUsernamesByQuery(query); // 예시, 아래 참고
     }
+
+    @GetMapping("/user/{username}")
+    public String viewUserPage(@PathVariable String username, Model model) {
+        MemberDTO user = ms.findUserByUsername(username);
+        if (user == null) {
+            return "usernotfound";
+        }
+        model.addAttribute("user", user);
+        // ... 추가 정보 (게시글 등)
+        return "viewuser";
+    }
 }

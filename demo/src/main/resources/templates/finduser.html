@@ -2,84 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/header.css">
-    <title>find user page</title>
+    <title>유저 찾기</title>
     <style>
-        .search-box-container {
-            max-width: 400px;
-            margin: 80px auto 0 auto;
-            padding: 38px 32px 22px 32px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 4px 24px rgba(60, 80, 120, 0.11);
-            text-align: center;
-        }
-        .search-input {
-            width: 80%;
-            padding: 13px 15px;
-            border: 1.5px solid #b0c4de;
-            border-radius: 7px;
-            font-size: 1.09em;
-            outline: none;
-            margin-bottom: 7px;
-        }
-        .search-result-list {
-            width: 100%;
-            margin: 10px 0 0 0;
-            text-align: left;
-            list-style: none;
-            padding: 0;
-        }
-        .search-result-list li {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e7e7f5;
-            cursor: pointer;
-            background: #fcfdff;
-            transition: background 0.12s;
-        }
-        .search-result-list li:hover {
-            background: #dde7fa;
-        }
+        .search-container { display: flex; flex-direction: column; align-items: center; margin-top: 60px;}
+        #user-search { width: 300px; padding: 12px; border-radius: 7px; border: 1.3px solid #b0c4de;}
+        .result-list { width: 300px; margin-top: 18px; background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(60,80,160,0.06); }
+        .result-item { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #f3f5f8;}
+        .result-item:last-child { border-bottom: none; }
+        .result-item:hover { background: #f3f6fc; color: #224677;}
     </style>
 </head>
 <body>
 <div th:replace="fragment/header :: header"></div>
-
-<div class="search-box-container">
-    <h2>유저 찾기</h2>
-    <input type="text" class="search-input" id="searchInput" placeholder="유저 이름을 입력하세요">
-    <ul class="search-result-list" id="resultList"></ul>
+<div class="search-container">
+    <input type="text" id="user-search" placeholder="사용자 이름을 입력하세요">
+    <div class="result-list" id="result-list"></div>
 </div>
-
 <script>
-    const searchInput = document.getElementById('searchInput');
-    const resultList = document.getElementById('resultList');
-
-    let timer = null;
-    searchInput.addEventListener('input', function () {
-        const query = this.value.trim();
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(function() {
-            if (query.length === 0) {
-                resultList.innerHTML = '';
-                return;
-            }
-            fetch(`/api/search-user?query=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    resultList.innerHTML = '';
-                    if (data && data.length > 0) {
-                        data.forEach(username => {
-                            const li = document.createElement('li');
-                            li.textContent = username;
-                            // 유저 상세 페이지 등으로 이동하려면 아래에서 href 추가
-                            // li.onclick = () => window.location.href = '/user/profile/' + username;
-                            resultList.appendChild(li);
-                        });
-                    } else {
-                        resultList.innerHTML = '<li style="color:#bbb;">검색 결과가 없습니다.</li>';
-                    }
+    document.getElementById("user-search").addEventListener("input", function() {
+        const q = this.value.trim();
+        const resultList = document.getElementById("result-list");
+        if(q.length === 0) {
+            resultList.innerHTML = "";
+            return;
+        }
+        fetch("/api/search-users?q=" + encodeURIComponent(q))
+            .then(res => res.json())
+            .then(list => {
+                resultList.innerHTML = "";
+                if(list.length === 0) {
+                    resultList.innerHTML = "<div style='padding:12px;color:#bbb;'>검색 결과가 없습니다.</div>";
+                    return;
+                }
+                list.forEach(username => {
+                    const div = document.createElement("div");
+                    div.className = "result-item";
+                    div.innerText = username;
+                    div.onclick = () => {
+                        window.location.href = "/user/" + encodeURIComponent(username);
+                    };
+                    resultList.appendChild(div);
                 });
-        }, 200); // 200ms debounce
+            });
     });
 </script>
 </body>
