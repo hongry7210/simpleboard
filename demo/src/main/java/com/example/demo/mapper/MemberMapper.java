@@ -2,7 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.dto.MemberDTO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.query.Param;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
