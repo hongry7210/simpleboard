@@ -98,5 +98,14 @@ public class MemberController {
         return Map.of("result", "ok");
     }
 
+    @GetMapping("/finduser")
+    public String finduserform(){
+        return "finduser";
+    }
 
+    @GetMapping("/api/search-user")
+    @ResponseBody
+    public List<String> searchUsernames(@RequestParam String query) {
+        return ms.findUsernamesByQuery(query); // 예시, 아래 참고
+    }
 }

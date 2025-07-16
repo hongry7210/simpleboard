@@ -19,4 +19,8 @@
         UPDATE user SET userpass = #{userpass} WHERE userid = #{userid}
     </update>
 
+    <select id="findUsernamesByPartial" resultType="string" parameterType="string">
+        SELECT username FROM user WHERE username LIKE CONCAT('%', #{query}, '%') LIMIT 20
+    </select>
+
 </mapper>

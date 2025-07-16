@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -28,6 +30,11 @@ public class MemberService {
 
     public void updatePassword(MemberDTO member) {
         mm.updatePassword(member); // member에는 userid, userpass 세팅
+    }
+
+    public List<String> findUsernamesByQuery(String query) {
+        // username LIKE '%query%'로 검색 (실제 구현은 Mapper/Repository에서)
+        return mm.findUsernamesByPartial(query);
     }
 
 }
