@@ -103,11 +103,12 @@ public class MemberController {
         return "finduser";
     }
 
-    @GetMapping("/api/search-user")
+    @GetMapping("/api/search-users")
     @ResponseBody
-    public List<String> searchUsernames(@RequestParam String query) {
-        return ms.findUsernamesByQuery(query); // 예시, 아래 참고
+    public List<String> searchUsernames(@RequestParam("q") String q) {
+        return ms.findUsernamesByQuery(q);
     }
+
 
     @GetMapping("/user/{username}")
     public String viewUserPage(@PathVariable String username, Model model) {
