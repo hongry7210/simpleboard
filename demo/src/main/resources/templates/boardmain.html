@@ -105,7 +105,7 @@
             <td>
                 <a th:href="@{/board/view(id=${board.id})}" th:text="${board.title}"></a>
             </td>
-            <td th:text="${board.writer}"></td>
+            <td><a th:href="@{/userinfo/{username}(username=${board.writer})}" th:text="${board.writer}"></a></td>
             <td th:text="${board.created_at}"></td>
         </tr>
         </tbody>

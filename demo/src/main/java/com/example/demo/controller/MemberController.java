@@ -113,14 +113,4 @@ public class MemberController {
         return ms.findUsernamesByQuery(q);
     }
 
-
-    @GetMapping("/user/{username}")
-    public String viewUserPage(@PathVariable String username, Model model) {
-        MemberDTO user = ms.findUserByUsername(username);
-        if (user == null) {
-            return "usernotfound";
-        }
-        model.addAttribute("user", user);
-        return "viewuser";
-    }
 }
