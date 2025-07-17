@@ -3,7 +3,6 @@ import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.CommentDTO;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.CommentService;
-import jakarta.servlet.http.HttpServletRequest;
 import com.example.demo.dto.MemberDTO;
 import com.example.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +53,12 @@ public class MemberController {
     @ResponseBody
     public boolean checkDuplicate(@RequestParam String userid) {
         return ms.findUserById(userid) != null;
+    }
+
+    @GetMapping("/api/check-duplicatename")
+    @ResponseBody
+    public boolean checkDuplicatename(@RequestParam String username) {
+        return ms.findUserByUsername(username) != null;
     }
 
     @GetMapping("/user/modify")
@@ -117,7 +121,6 @@ public class MemberController {
             return "usernotfound";
         }
         model.addAttribute("user", user);
-        // ... 추가 정보 (게시글 등)
         return "viewuser";
     }
 }
