@@ -36,10 +36,10 @@ public class MemberController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute("member") MemberDTO member){
-        if(ms.save(member)==true)
-            return "redirect:/login";
-        else
-            return "duplicateUser";
+        System.out.println(member);
+        ms.save(member);
+        return "redirect:/login";
+
     }
 
     @GetMapping("/login")

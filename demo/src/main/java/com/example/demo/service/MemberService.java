@@ -15,13 +15,9 @@ public class MemberService {
     private final MemberMapper mm;
     PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public boolean save(MemberDTO member){
-        if(mm.findUserById(member.getUserid()) != null) {
-            return false;
-        }
+    public void save(MemberDTO member){
         member.setUserpass(encoder.encode(member.getUserpass()));
         mm.save(member);
-        return true;
     }
 
     public MemberDTO findUserById(String userid){
