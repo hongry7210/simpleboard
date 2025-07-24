@@ -13,4 +13,5 @@ public interface MemberMapper {
     void updatePassword(MemberDTO member);
     List<String> findUsernamesByPartial(@Param("query") String query);
     MemberDTO findUserByUsername(String username);
+    List<String> findFriendUsernames(@Param("username") String username);
 }

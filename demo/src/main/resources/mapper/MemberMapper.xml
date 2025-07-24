@@ -30,4 +30,15 @@
         LIMIT 1
     </select>
 
+    <select id="findFriendUsernames" parameterType="string" resultType="string">
+        SELECT
+        CASE
+        WHEN sender = #{username} THEN receiver
+        ELSE sender
+        END AS friend_username
+        FROM friend
+        WHERE (sender = #{username} OR receiver = #{username})
+        AND receiver_accept = 1
+    </select>
+
 </mapper>

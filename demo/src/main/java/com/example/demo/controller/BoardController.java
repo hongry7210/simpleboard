@@ -5,6 +5,7 @@ import com.example.demo.dto.CommentDTO;
 import com.example.demo.dto.MemberDTO;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.CommentService;
+import com.example.demo.service.FriendService;
 import com.example.demo.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,10 +30,14 @@ public class BoardController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private FriendService friendService;
 
     @GetMapping("/boardmain")
-    public String boardList(Model model) {
+    public String boardList(Model model, Principal principal) {
         List<BoardDTO> boards = boardService.getAllBoards();
+        List<String> friends = friendService.getFriends(memberService.findUserById(principal.getName()).getUsername());
+        model.addAttribute("friends", friends);
         model.addAttribute("boards", boards);
         return "boardmain";
     }

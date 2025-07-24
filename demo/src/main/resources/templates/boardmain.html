@@ -84,10 +84,86 @@
         @media (max-width: 900px) {
             .container { width: 98%; padding: 20px 2vw; }
         }
+
+        /* ===== 친구목록 버튼/팝오버 ===== */
+        .friend-btn-pop {
+            position: fixed;
+            top: 26px;
+            right: 38px;
+            z-index: 1100;
+            background: #fff;
+            color: #4682b4;
+            border: 1.7px solid #b3cef6;
+            border-radius: 50px;
+            padding: 10px 22px 10px 44px;
+            font-weight: 700;
+            font-size: 1.09em;
+            box-shadow: 0 4px 16px rgba(70,130,180,0.10);
+            transition: background 0.18s, box-shadow 0.18s, color 0.16s;
+            cursor: pointer;
+            background-image: url('/img/user-group.svg');
+            background-repeat: no-repeat;
+            background-size: 22px 22px;
+            background-position: 14px center;
+        }
+        .friend-btn-pop:hover {
+            background: #f5faff;
+            color: #224677;
+            box-shadow: 0 8px 26px rgba(70,130,180,0.17);
+        }
+        .friend-popover {
+            position: fixed;
+            top: 64px;   /* 버튼 바로 아래 */
+            right: 38px;
+            min-width: 290px;
+            background: #fff;
+            border-radius: 13px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.13);
+            z-index: 2200;
+            padding: 19px 14px 12px 14px;
+            border: 1.5px solid #c2d5f5;
+            animation: popover-fadein 0.15s;
+        }
+        @keyframes popover-fadein {
+            from { opacity: 0; transform: translateY(16px);}
+            to   { opacity: 1; transform: translateY(0);}
+        }
+        .friend-popover-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 1.09em;
+            padding-bottom: 7px; border-bottom: 1px solid #f0f0f0;
+        }
+        .friend-popover-close { border:none; background:none; font-size:1.32em; color:#aaa; cursor:pointer;}
+        .friend-popover-content { max-height: 280px; overflow-y: auto; margin-top: 8px;}
+        .friend-popover-content ul {list-style:none; margin:0; padding:0;}
+        .friend-popover-content li { padding:7px 0 7px 2px; border-bottom:1px solid #f4f6f8;}
+        .friend-popover-content li:last-child { border-bottom:none;}
     </style>
 </head>
 <body>
 <div th:replace="fragment/header :: header"></div>
+
+<!-- 친구목록 버튼 및 팝오버(항상 최상단, 오른쪽 고정) -->
+<button id="friend-btn" onclick="toggleFriendDropdown()" class="friend-btn-pop">
+    친구목록
+</button>
+<div id="friend-popover" class="friend-popover" style="display:none;">
+    <div class="friend-popover-header">
+        <span>친구 목록</span>
+        <button onclick="toggleFriendDropdown()" class="friend-popover-close">&times;</button>
+    </div>
+    <div class="friend-popover-content">
+        <ul>
+            <li th:each="friend : ${friends}">
+                <span th:text="${friend}"></span>
+            </li>
+        </ul>
+        <div th:if="${#lists.isEmpty(friends)}" style="color:#888;text-align:center;">
+            친구가 없습니다.
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <h2>게시판 목록</h2>
     <table>
@@ -112,5 +188,25 @@
     </table>
     <a class="write-btn" th:href="@{/board/write}">글쓰기</a>
 </div>
+<script>
+    function toggleFriendDropdown() {
+        const box = document.getElementById('friend-popover');
+        box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+        // 바깥 클릭 시 닫기
+        if (box.style.display === 'block') {
+            setTimeout(() => {
+                document.addEventListener('click', outsideClick);
+            }, 10);
+        }
+    }
+    function outsideClick(e) {
+        const dropdown = document.getElementById('friend-popover');
+        const btn = document.getElementById('friend-btn');
+        if (!dropdown.contains(e.target) && e.target !== btn) {
+            dropdown.style.display = 'none';
+            document.removeEventListener('click', outsideClick);
+        }
+    }
+</script>
 </body>
 </html>

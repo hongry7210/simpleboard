@@ -16,4 +16,6 @@ public interface AddFriendMapper {
 
     @Update("UPDATE friend SET receiver_accept = #{accept} WHERE sender = #{sender} AND receiver = #{receiver}")
     int updateFriendAccept(@Param("sender") String sender, @Param("receiver") String receiver, @Param("accept") int accept);
+
+
 }

@@ -2,14 +2,20 @@ package com.example.demo.service;
 
 import com.example.demo.dto.FriendDTO;
 import com.example.demo.mapper.AddFriendMapper;
+import com.example.demo.mapper.MemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class FriendService {
 
     @Autowired
     AddFriendMapper am;
+
+    @Autowired
+    MemberMapper mm;
 
     public boolean addFriend(String sender, String receiver) {
         // 이미 친구거나 요청중인지 확인 후 없으면 insert
@@ -51,5 +57,9 @@ public class FriendService {
         // 3. 친구 요청 수락 처리 (receiver_accept = 1로 업데이트)
         int result = am.updateFriendAccept(sender, receiver, 1);
         return true;
+    }
+
+    public List<String> getFriends(String username){
+        return mm.findFriendUsernames(username);
     }
 }
