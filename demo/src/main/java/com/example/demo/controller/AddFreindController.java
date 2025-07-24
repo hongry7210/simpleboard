@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -26,13 +27,12 @@ public class AddFreindController {
     public String viewUserPage(@PathVariable String username, Model model, Principal principal) {
         MemberDTO user = ms.findUserByUsername(username);
         String myName = ms.findUserById(principal.getName()).getUsername();
-        boolean isRequested = fs.isFriendRequestPending(myName, user.getUsername());
+        int friendStatus = fs.friendStatus(myName, user.getUsername());
         model.addAttribute("user", user);
-        model.addAttribute("isRequested", isRequested);
+        model.addAttribute("friendStatus", friendStatus);
         model.addAttribute("myUsername", myName);
         return "userinfo";
     }
-
 
     @PostMapping("/api/add-friend")
     @ResponseBody
@@ -56,6 +56,18 @@ public class AddFreindController {
         System.out.println(sender + " 님이 " + receiver + " 님에게 보낸 친구 요청을 취소합니다");
         fs.cancelFriend(sender, receiver);
         return Map.of("result", "ok");
+    }
+
+    @PostMapping("/api/accept-friend")
+    @ResponseBody
+    public Map<String, Object> acceptFriend(@RequestBody Map<String, String> payload) {
+        String sender = payload.get("sender");
+        String receiver = payload.get("receiver");
+        boolean result = fs.acceptFriendRequest(receiver, sender);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("result", result ? "ok" : "fail");
+        if (!result) resp.put("msg", "수락 처리에 실패했습니다.");
+        return resp;
     }
 
 }

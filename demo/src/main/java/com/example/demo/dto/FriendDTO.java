@@ -13,6 +13,6 @@ public class FriendDTO {
     private Long id;
     private String sender;          // 친구 신청 보낸 username
     private String receiver;        // 친구 신청 받은 username
-    private int receiverAccept;     // 0: 대기/거절, 1: 수락
+    private int receiver_accept;     // 0: 대기/거절, 1: 수락
     private LocalDateTime createdAt;
 }

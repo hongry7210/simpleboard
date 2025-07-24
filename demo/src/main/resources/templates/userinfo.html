@@ -34,7 +34,8 @@
     <button id="friend-btn"></button>
 </div>
 <script>
-    const isRequested = [[${isRequested} ? 'true' : 'false']];
+    const friendStatus = [[${friendStatus}]]
+    console.log(friendStatus);
     const sender = "[[${myUsername}]]";
     const receiver = "[[${user.username}]]";
     const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
@@ -53,7 +54,7 @@
         .then(data => {
             if(data.result === "ok") {
                 alert("친구 요청을 보냈습니다!");
-                updateFriendBtn(true);
+                updateFriendBtn(1);
             } else {
                 alert(data.msg || "이미 신청한 친구입니다.");
             }
@@ -73,7 +74,7 @@
         .then(data => {
             if(data.result === "ok") {
                 alert("요청이 취소되었습니다.");
-                updateFriendBtn(false);
+                updateFriendBtn(0);
             } else {
                 alert(data.msg || "취소할 요청이 없습니다.");
             }
@@ -81,25 +82,67 @@
     }
 
     // 버튼 상태 전환 함수
-    function updateFriendBtn(isRequested) {
+    function updateFriendBtn(friendStatus) {
         const btn = document.getElementById('friend-btn');
-        if(isRequested) {
-            btn.innerText = "요청취소";
-            btn.onclick = cancelFriend;
-            btn.style.background = "#f77c7c";
-            btn.style.color = "#fff";
-        } else {
-            btn.innerText = "친구 추가";
-            btn.onclick = addFriend;
-            btn.style.background = "";
-            btn.style.color = "";
+        btn.disabled = false;
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.onclick = null;
+
+        switch(friendStatus) {
+            case 0:
+                btn.innerText = "친구 추가";
+                btn.onclick = addFriend;
+                break;
+            case 1:
+                btn.innerText = "요청취소";
+                btn.onclick = cancelFriend;
+                btn.style.background = "#f77c7c";
+                btn.style.color = "#fff";
+                break;
+            case 2:
+            case 3:
+                btn.innerText = "친구";
+                btn.disabled = true;
+                btn.style.background = "#eee";
+                btn.style.color = "#bbb";
+                break;
+            case 4:
+                btn.innerText = "친구 수락";
+                btn.onclick = acceptFriend;
+                btn.style.background = "#41b883";
+                btn.style.color = "#fff";
+                break;
         }
     }
 
-    window.onload = function() {
-        updateFriendBtn(isRequested);
-    };
+    function acceptFriend() {
+    console.log(sender, receiver);
+        fetch("/api/accept-friend", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({ sender, receiver })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.result === "ok") {
+                alert("친구 요청을 수락했습니다!");
+                updateFriendBtn(2); // 친구 상태로 갱신 (혹은 2로도 무방)
+            } else {
+                alert(data.msg || "친구 요청 수락에 실패했습니다.");
+            }
+        })
+        .catch(err => {
+            alert("네트워크 오류입니다.");
+        });
+    }
 
+    window.onload = function() {
+        updateFriendBtn(friendStatus);
+    };
 </script>
 </body>
 </html>

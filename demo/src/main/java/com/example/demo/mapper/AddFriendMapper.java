@@ -1,10 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.FriendDTO;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface AddFriendMapper {
@@ -16,4 +13,7 @@ public interface AddFriendMapper {
 
     @Delete("Delete From friend Where sender=#{sender} AND receiver=#{receiver}")
     void deleteFriendRequest(String sender, String receiver);
+
+    @Update("UPDATE friend SET receiver_accept = #{accept} WHERE sender = #{sender} AND receiver = #{receiver}")
+    int updateFriendAccept(@Param("sender") String sender, @Param("receiver") String receiver, @Param("accept") int accept);
 }
