@@ -25,18 +25,11 @@ public class AddFreindController {
     @GetMapping("/userinfo/{username}")
     public String viewUserPage(@PathVariable String username, Model model, Principal principal) {
         MemberDTO user = ms.findUserByUsername(username);
-        if (user == null) {
-            return "usernotfound";
-        }
+        String myName = ms.findUserById(principal.getName()).getUsername();
+        boolean isRequested = fs.isFriendRequestPending(myName, user.getUsername());
         model.addAttribute("user", user);
-
-        // 로그인한 사용자의 username도 함께 전달
-        if (principal != null) {
-            String myUserId = principal.getName(); // 이건 userId!
-            MemberDTO me = ms.findUserById(myUserId);
-            model.addAttribute("myUsername", me.getUsername()); // 닉네임 전달!
-            System.out.println(me.getUsername());
-        }
+        model.addAttribute("isRequested", isRequested);
+        model.addAttribute("myUsername", myName);
         return "userinfo";
     }
 
@@ -45,7 +38,6 @@ public class AddFreindController {
     @ResponseBody
     public Map<String, String> addFriend(@RequestBody Map<String, String> req, Principal principal) {
         String sender = (ms.findUserById(principal.getName())).getUsername();
-
         String receiver = req.get("receiver");
         System.out.println(receiver);
         if(sender.equals(receiver)) {
@@ -54,6 +46,16 @@ public class AddFreindController {
         boolean ok = fs.addFriend(sender, receiver);
         if(ok) return Map.of("result", "ok");
         else return Map.of("result", "fail", "msg", "이미 신청한 친구입니다");
+    }
+
+    @PostMapping("/api/cancel-friend")
+    @ResponseBody
+    public Map<String, String> cancelFriend(@RequestBody Map<String, String> req, Principal principal){
+        String sender = (ms.findUserById(principal.getName())).getUsername();
+        String receiver = req.get("receiver");
+        System.out.println(sender + " 님이 " + receiver + " 님에게 보낸 친구 요청을 취소합니다");
+        fs.cancelFriend(sender, receiver);
+        return Map.of("result", "ok");
     }
 
 }

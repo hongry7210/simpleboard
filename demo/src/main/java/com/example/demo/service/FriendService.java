@@ -19,4 +19,13 @@ public class FriendService {
         return true;
     }
 
+    public void cancelFriend(String sender, String receiver){
+        am.deleteFriendRequest(sender, receiver);
+    }
+
+    public boolean isFriendRequestPending(String sender, String receiver){
+        FriendDTO existing = am.findFriendRequest(sender, receiver);
+        if(existing != null) return true;
+        return false;
+    }
 }

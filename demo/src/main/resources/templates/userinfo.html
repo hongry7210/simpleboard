@@ -31,36 +31,75 @@
     </div>
     <!-- 여기에 필요시 이메일, 가입일 등도 추가 가능 -->
 
-    <div class="user-btns">
-        <button class="friend-btn" onclick="addFriend()">친구 추가</button>
-        <button class="message-btn">쪽지 보내기</button>
-    </div>
+    <button id="friend-btn"></button>
 </div>
 <script>
-    // 본인 username도 서버에서 받아와야 함
-    const sender = "[[${myUsername}]]";   // 내 닉네임
-    console.log(sender);
-    const receiver = "[[${user.username}]]"; // 상대방 닉네임
-    console.log(receiver);
+    const isRequested = [[${isRequested} ? 'true' : 'false']];
+    const sender = "[[${myUsername}]]";
+    const receiver = "[[${user.username}]]";
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
     function addFriend() {
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
         fetch("/api/add-friend", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            [csrfHeader]: csrfToken
-          },
-          body: JSON.stringify({sender, receiver})
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({sender, receiver})
         })
         .then(res => res.json())
         .then(data => {
-            if(data.result === "ok") alert("친구 요청을 보냈습니다!");
-            else alert(data.msg || "이미 신청한 친구입니다.");
+            if(data.result === "ok") {
+                alert("친구 요청을 보냈습니다!");
+                updateFriendBtn(true);
+            } else {
+                alert(data.msg || "이미 신청한 친구입니다.");
+            }
         });
     }
+
+    function cancelFriend() {
+        fetch("/api/cancel-friend", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({sender, receiver})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.result === "ok") {
+                alert("요청이 취소되었습니다.");
+                updateFriendBtn(false);
+            } else {
+                alert(data.msg || "취소할 요청이 없습니다.");
+            }
+        });
+    }
+
+    // 버튼 상태 전환 함수
+    function updateFriendBtn(isRequested) {
+        const btn = document.getElementById('friend-btn');
+        if(isRequested) {
+            btn.innerText = "요청취소";
+            btn.onclick = cancelFriend;
+            btn.style.background = "#f77c7c";
+            btn.style.color = "#fff";
+        } else {
+            btn.innerText = "친구 추가";
+            btn.onclick = addFriend;
+            btn.style.background = "";
+            btn.style.color = "";
+        }
+    }
+
+    window.onload = function() {
+        updateFriendBtn(isRequested);
+    };
+
 </script>
 </body>
 </html>
