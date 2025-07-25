@@ -132,6 +132,31 @@
                 min-height: 100vh;
             }
         }
+        .bubble {
+            position: relative;
+            display: inline-flex;
+            align-items: flex-end;
+            /* 기존 스타일 유지 */
+        }
+
+        .message-me .bubble-time {
+            font-size: 0.67em;
+            color: #e3e8f2;
+            margin-right: 8px;
+            margin-left: 0;
+            align-self: flex-end;
+            /* float 말고 flex로 맞춤 */
+            order: -1; /* bubble에서 맨 앞(왼쪽) */
+        }
+
+        .message-friend .bubble-time {
+            font-size: 0.67em;
+            color: #b1b8c7;
+            margin-left: 8px;
+            margin-right: 0;
+            align-self: flex-end;
+            order: 1;  /* bubble에서 맨 뒤(오른쪽) */
+        }
     </style>
 </head>
 <body>
@@ -144,7 +169,12 @@
             <ul id="message-list">
                 <li th:each="msg : ${chatHistory}"
                     th:classappend="${msg.sender == me} ? 'message-me' : 'message-friend'">
-                    <span class="bubble" th:text="${msg.content}"></span>
+                    <span class="bubble">
+                        <span th:if="${msg.sender == me}" class="bubble-time" th:text="${#temporals.format(msg.sendTime, 'a hh:mm')} + ' '"></span>
+                        <span th:text="${msg.content}"></span>
+                        <span th:if="${msg.sender != me}" class="bubble-time" th:text="' ' + ${#temporals.format(msg.sendTime, 'a hh:mm')}"></span>
+                    </span>
+                    <div class="msg-time" th:text="${#temporals.format(msg.sendTime, 'a hh:mm')}"></div>
                 </li>
             </ul>
         </div>
@@ -212,18 +242,42 @@ function goBack() {
         setTimeout(scrollToBottom, 10);
    }
 
-   function addMessage(msg) {
-       const list = document.getElementById('message-list');
-       const li = document.createElement('li');
-       li.className = (msg.sender === username) ? 'message-me' : 'message-friend';
-       const span = document.createElement('span');
-       span.className = 'bubble';
-       span.textContent = msg.content;
-       li.appendChild(span);
-       list.appendChild(li);
-       list.scrollTop = list.scrollHeight;
-       setTimeout(scrollToBottom, 10);
-   }
+       function addMessage(msg) {
+        const list = document.getElementById('message-list');
+        const li = document.createElement('li');
+        const isMe = (msg.sender === username);
+        li.className = isMe ? 'message-me' : 'message-friend';
+
+        // 시간
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'bubble-time';
+        const timestamp = msg.time || msg.sendTime;
+        if (timestamp) {
+            const date = new Date(timestamp);
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            let ampm = hours < 12 ? "오전" : "오후";
+            hours = hours % 12;
+            if (hours === 0) hours = 12;
+            timeSpan.textContent = ` ${ampm} ${hours.toString().padStart(2, '0')}:${minutes}`;
+        }
+
+        // 메시지
+        const bubble = document.createElement('span');
+        bubble.className = 'bubble';
+        bubble.textContent = msg.content;
+
+        // 말풍선 안에 시간 위치 다르게 배치
+        if (isMe) {
+            bubble.insertBefore(timeSpan, bubble.firstChild); // 내 메시지는 왼쪽
+        } else {
+            bubble.appendChild(timeSpan); // 상대 메시지는 오른쪽
+        }
+
+        li.appendChild(bubble);
+        list.appendChild(li);
+        setTimeout(scrollToBottom, 10);
+    }
 
    // 폼 이벤트 가로채기
    document.getElementById('chat-form').addEventListener('submit', function(e) {

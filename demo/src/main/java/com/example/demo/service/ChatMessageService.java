@@ -50,15 +50,15 @@ public class ChatMessageService {
     }
 
     public void sendAndSaveMessage(ChatMessageDTO message) {
-        // 1. 메시지 DB 저장 (생략)
-        chatMessageMapper.insertMessage(message);
+        //메시지 DB 저장
+        save(message);
 
-        // 2. 본인(보낸사람)에게 메시지 전송
+        //본인에게 메시지 전송
         messagingTemplate.convertAndSendToUser(
                 message.getSender(), "/queue/messages", message
         );
         System.out.println(message.getSender());
-        // 3. 상대방(받는사람)에게도 메시지 전송 (여기가 중요!)
+        //상대방에게도 메시지 전송
         if (!message.getSender().equals(message.getReceiver())) { // 자기 자신이 아닐 때만
             System.out.println(message.getReceiver());
             messagingTemplate.convertAndSendToUser(
