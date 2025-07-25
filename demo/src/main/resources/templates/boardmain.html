@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" href="/css/header.css">
     <title>게시판 목록</title>
     <style>
@@ -101,10 +103,10 @@
             box-shadow: 0 4px 16px rgba(70,130,180,0.10);
             transition: background 0.18s, box-shadow 0.18s, color 0.16s;
             cursor: pointer;
-            background-image: url('/img/user-group.svg');
             background-repeat: no-repeat;
             background-size: 22px 22px;
             background-position: 14px center;
+            margin-top: 40px;   /* 원하는 만큼 값 조절 */
         }
         .friend-btn-pop:hover {
             background: #f5faff;
@@ -138,6 +140,19 @@
         .friend-popover-content ul {list-style:none; margin:0; padding:0;}
         .friend-popover-content li { padding:7px 0 7px 2px; border-bottom:1px solid #f4f6f8;}
         .friend-popover-content li:last-child { border-bottom:none;}
+
+        .accept-btn, .cancel-btn {
+            margin-left: 10px;
+            padding: 2px 9px;
+            border: none;
+            border-radius: 7px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .accept-btn { background: #41b883; color: #fff;}
+        .cancel-btn { background: #f77c7c; color: #fff;}
+        .accept-btn:hover { background: #2fa170;}
+        .cancel-btn:hover { background: #d75d5d;}
     </style>
 </head>
 <body>
@@ -145,11 +160,11 @@
 
 <!-- 친구목록 버튼 및 팝오버(항상 최상단, 오른쪽 고정) -->
 <button id="friend-btn" onclick="toggleFriendDropdown()" class="friend-btn-pop">
-    친구 현황
+    친구 요청 목록
 </button>
 <div id="friend-popover" class="friend-popover" style="display:none;">
     <div class="friend-popover-header">
-        <span>친구 현황</span>
+        <span>친구 요청 목록</span>
         <button onclick="toggleFriendDropdown()" class="friend-popover-close">&times;</button>
     </div>
     <div class="friend-popover-content">
@@ -159,6 +174,7 @@
             <ul>
                 <li th:each="user : ${requestusers}">
                     <span th:text="${user}"></span>
+                    <button type="button" class="accept-btn" th:attr="data-user=${user}">수락</button>
                 </li>
             </ul>
             <div th:if="${#lists.isEmpty(requestusers)}" style="color:#888;text-align:center;">
@@ -172,6 +188,7 @@
             <ul>
                 <li th:each="user : ${sendusers}">
                     <span th:text="${user}"></span>
+                    <button type="button" class="cancel-btn" th:attr="data-user=${user}">취소</button>
                 </li>
             </ul>
             <div th:if="${#lists.isEmpty(sendusers)}" style="color:#888;text-align:center;">
@@ -216,6 +233,7 @@
             }, 10);
         }
     }
+
     function outsideClick(e) {
         const dropdown = document.getElementById('friend-popover');
         const btn = document.getElementById('friend-btn');
@@ -224,6 +242,82 @@
             document.removeEventListener('click', outsideClick);
         }
     }
+
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 수락 버튼
+        document.querySelectorAll('.accept-btn').forEach(function(btn) {
+            const sender = "[[${myUsername}]]";
+            btn.addEventListener('click', function() {
+                const receiver = this.getAttribute('data-user');
+                const _this = this; // 버튼 자기자신 참조
+                // AJAX로 친구 수락
+                fetch("/api/accept-friend", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // CSRF 필요시 아래 2줄 추가
+                        [document.querySelector('meta[name="_csrf_header"]').content]:
+                        document.querySelector('meta[name="_csrf"]').content
+                    },
+                    body: JSON.stringify({ sender, receiver })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.result === "ok") {
+                        alert("수락 완료!");
+                         _this.style.display = "none";
+                        const span = document.createElement('span');
+                        span.innerText = " 친구";
+                        span.style.color = "#41b883";
+                        _this.parentNode.appendChild(span);
+                    } else {
+                        alert(data.msg || "수락 실패");
+                    }
+                });
+            });
+        });
+
+        // 취소 버튼
+        document.querySelectorAll('.cancel-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const receiver = this.getAttribute('data-user');
+                const sender = "[[${myUsername}]]";
+                console.log(receiver + sender);
+                const _this = this; // 현재 버튼 참조
+                // AJAX로 친구 요청 취소
+                fetch("/api/cancel-friend", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [document.querySelector('meta[name="_csrf_header"]').content]:
+                        document.querySelector('meta[name="_csrf"]').content
+                    },
+                    body: JSON.stringify({ sender, receiver })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.result === "ok") {
+                        alert("요청이 취소되었습니다");
+                        _this.closest('li').remove();
+                        const ul = _this.closest('ul');
+                        if(ul && ul.children.length === 0) {
+                            const msg = document.createElement('div');
+                            msg.style.color = "#888";
+                            msg.style.textAlign = "center";
+                            msg.innerText = "보낸 친구 요청이 없습니다.";
+                            ul.parentNode.appendChild(msg);
+                        }
+                    } else {
+                        alert(data.msg || "취소 실패");
+                    }
+                });
+            });
+        });
+    });
+
 </script>
 </body>
 </html>

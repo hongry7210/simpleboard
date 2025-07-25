@@ -39,7 +39,9 @@ public class BoardController {
         List<BoardDTO> boards = boardService.getAllBoards();
         List<String> requestusers = friendService.getRequestlist(principal.getName());
         List<String> sendusers = friendService.getSendlist(principal.getName());
+        String myName = memberService.findUserById(principal.getName()).getUsername();
 
+        model.addAttribute("myUsername", myName);
         model.addAttribute("sendusers", sendusers);
         model.addAttribute("requestusers", requestusers);
         model.addAttribute("boards", boards);
