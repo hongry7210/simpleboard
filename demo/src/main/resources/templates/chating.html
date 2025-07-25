@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>채팅 - 친구목록</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            background: #f7faff;
+            margin: 0; padding: 0;
+        }
+        .chat-container {
+            width: 340px; margin: 60px auto;
+            background: #fff;
+            border-radius: 13px;
+            box-shadow: 0 4px 24px rgba(70,130,180,0.12);
+            padding: 28px 30px 22px 30px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.2em;
+            color: #364154;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+        .friend-list { list-style: none; margin: 0; padding: 0; }
+        .friend-item {
+            padding: 12px 6px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            font-size: 1.06em;
+            color: #22599b;
+            transition: background 0.14s;
+        }
+        .friend-item:hover {
+            background: #f3f9ff;
+            color: #153f73;
+        }
+        .no-friend {
+            color: #a0aec0; text-align:center; margin: 40px 0 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <h2>친구 목록</h2>
+    <ul class="friend-list">
+        <li th:each="friend : ${friends}"
+            th:text="${friend}"
+            th:attr="data-friend=${friend}"
+            class="friend-item">
+            친구이름
+        </li>
+
+    </ul>
+    <div th:if="${#lists.isEmpty(friends)}" class="no-friend">
+        친구가 없습니다.
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        document.querySelectorAll('.friend-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var friend = this.getAttribute('data-friend');
+                window.location.href = '/chat/room?friend=' + encodeURIComponent(friend);
+            });
+        });
+    });
+</script>
+</body>
+</html>

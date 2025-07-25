@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.ChatMessageMapper">
+
+    <insert id="insertMessage" parameterType="com.example.demo.dto.ChatMessageDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chatmassage
+        (sender, receiver, content, time)
+        VALUES
+        (#{sender}, #{receiver}, #{content}, #{sendTime})
+    </insert>
+
+    <select id="selectMessagesBetweenUsers" resultType="com.example.demo.dto.ChatMessageDTO">
+        SELECT *
+        FROM chatmassage
+        WHERE (sender = #{user1} AND receiver = #{user2})
+        OR (sender = #{user2} AND receiver = #{user1})
+        ORDER BY id ASC
+    </select>
+
+</mapper>
