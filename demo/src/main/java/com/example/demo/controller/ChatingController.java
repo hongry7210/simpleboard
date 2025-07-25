@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ChatMessageDTO;
+import com.example.demo.dto.FriendDTO;
+import com.example.demo.dto.FriendInfoDTO;
 import com.example.demo.dto.MemberDTO;
+import com.example.demo.mapper.AddFriendMapper;
 import com.example.demo.service.ChatMessageService;
 import com.example.demo.service.FriendService;
 import com.example.demo.service.MemberService;
@@ -34,7 +37,7 @@ public class ChatingController {
 
     @MessageMapping("/chat.send") // /app/chat.send로 전송됨
     @SendToUser("/queue/messages") // 본인에게만, 브로드캐스트는 @SendTo("/topic/방이름")
-    public void send(ChatMessageDTO message, Principal principal) {
+    public void send(ChatMessageDTO message) {
         chatMessageService.sendAndSaveMessage(message);
     }
 
@@ -44,8 +47,8 @@ public class ChatingController {
         String username = principal.getName();
         MemberDTO user = memberService.findUserById(username);
         // 해당 사용자의 친구 목록 조회 (이름만 리스트로)
-        List<String> friends = friendService.getFriends(user.getUsername());
-
+        //List<String> friends = friendService.getFriends(user.getUsername());
+        List<FriendInfoDTO> friends = friendService.getFriends(user.getUsername());
         model.addAttribute("friends", friends);
         model.addAttribute("me", username); // 본인 정보도 전달
 
@@ -54,11 +57,11 @@ public class ChatingController {
 
     // 1:1 채팅방 (chatroom.html)
     @GetMapping("/chat/room")
-    public String chatRoomPage(@RequestParam("friend") String friend, Model model, Principal principal) {
-        String username = memberService.findUserById(   principal.getName()).getUsername();
-        List<ChatMessageDTO> chatHistory = chatMessageService.getChatHistory(username, friend);
-        model.addAttribute("me", username);
+    public String chatRoomPage(@RequestParam("friendId") String friend, @RequestParam("friendName") String friendName, Model model, Principal principal) {
+        List<ChatMessageDTO> chatHistory = chatMessageService.getChatHistory(principal.getName(), friend);
+        model.addAttribute("me", principal.getName());
         model.addAttribute("friend", friend);
+        model.addAttribute("friendName", friendName);
         model.addAttribute("chatHistory", chatHistory);
         return "chatroom";  // templates/chatroom.html
     }

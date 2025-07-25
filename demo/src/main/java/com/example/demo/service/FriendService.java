@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.FriendDTO;
+import com.example.demo.dto.FriendInfoDTO;
+import com.example.demo.dto.MemberDTO;
 import com.example.demo.mapper.AddFriendMapper;
 import com.example.demo.mapper.MemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,9 @@ public class FriendService {
         // 이미 친구거나 요청중인지 확인 후 없으면 insert
         FriendDTO existing = am.findFriendRequest(sender, receiver);
         if(existing != null) return false;
-        am.insertFriendRequest(sender, receiver);
+        MemberDTO senderid = mm.findUserByUsername(sender);
+        MemberDTO receiverid = mm.findUserByUsername(receiver);
+        am.insertFriendRequest(sender, receiver, senderid.getUserid(), receiverid.getUserid());
         return true;
     }
 
@@ -55,11 +59,11 @@ public class FriendService {
         if(request.getReceiver_accept() == 1) return true;
 
         // 3. 친구 요청 수락 처리 (receiver_accept = 1로 업데이트)
-        int result = am.updateFriendAccept(sender, receiver, 1);
+        am.updateFriendAccept(sender, receiver, 1);
         return true;
     }
 
-    public List<String> getFriends(String username){
+    public List<FriendInfoDTO> getFriends(String username){
         return mm.findFriendUsernames(username);
     }
 }

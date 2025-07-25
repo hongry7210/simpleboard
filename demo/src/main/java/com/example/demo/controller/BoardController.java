@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.CommentDTO;
+import com.example.demo.dto.FriendInfoDTO;
 import com.example.demo.dto.MemberDTO;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.CommentService;
@@ -36,7 +37,7 @@ public class BoardController {
     @GetMapping("/boardmain")
     public String boardList(Model model, Principal principal) {
         List<BoardDTO> boards = boardService.getAllBoards();
-        List<String> friends = friendService.getFriends(memberService.findUserById(principal.getName()).getUsername());
+        List<FriendInfoDTO> friends = friendService.getFriends(memberService.findUserById(principal.getName()).getUsername());
         model.addAttribute("friends", friends);
         model.addAttribute("boards", boards);
         return "boardmain";

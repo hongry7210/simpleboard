@@ -46,12 +46,11 @@
     <h2>친구 목록</h2>
     <ul class="friend-list">
         <li th:each="friend : ${friends}"
-            th:text="${friend}"
-            th:attr="data-friend=${friend}"
+            th:text="${friend.friendname}"
+            th:attr="data-friend-id=${friend.friendid},data-friend-name=${friend.friendname}"
             class="friend-item">
             친구이름
         </li>
-
     </ul>
     <div th:if="${#lists.isEmpty(friends)}" class="no-friend">
         친구가 없습니다.
@@ -61,8 +60,9 @@
     document.addEventListener("DOMContentLoaded", function(){
         document.querySelectorAll('.friend-item').forEach(function(item) {
             item.addEventListener('click', function() {
-                var friend = this.getAttribute('data-friend');
-                window.location.href = '/chat/room?friend=' + encodeURIComponent(friend);
+                var friendId = this.getAttribute('data-friend-id');
+                var friendName = this.getAttribute('data-friend-name');
+                window.location.href = '/chat/room?friendId=' + encodeURIComponent(friendId) + '&friendName=' + encodeURIComponent(friendName);
             });
         });
     });

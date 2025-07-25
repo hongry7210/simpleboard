@@ -30,15 +30,22 @@
         LIMIT 1
     </select>
 
-    <select id="findFriendUsernames" parameterType="string" resultType="string">
+    <select id="findFriendUsernames" parameterType="string" resultType="com.example.demo.dto.FriendInfoDTO">
         SELECT
         CASE
-        WHEN sender = #{username} THEN receiver
-        ELSE sender
-        END AS friend_username
-        FROM friend
-        WHERE (sender = #{username} OR receiver = #{username})
-        AND receiver_accept = 1
+        WHEN f.sender = #{username} THEN f.receiver
+        ELSE f.sender
+        END AS friendname,
+        CASE
+        WHEN f.sender = #{username} THEN m2.userid
+        ELSE m1.userid
+        END AS friendid
+        FROM friend f
+        JOIN user m1 ON f.sender = m1.username
+        JOIN user m2 ON f.receiver = m2.username
+        WHERE (f.sender = #{username} OR f.receiver = #{username})
+        AND f.receiver_accept = 1
     </select>
+
 
 </mapper>

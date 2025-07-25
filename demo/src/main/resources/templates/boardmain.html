@@ -155,7 +155,7 @@
     <div class="friend-popover-content">
         <ul>
             <li th:each="friend : ${friends}">
-                <span th:text="${friend}"></span>
+                <span th:text="${friend.friendname}"></span>
             </li>
         </ul>
         <div th:if="${#lists.isEmpty(friends)}" style="color:#888;text-align:center;">
