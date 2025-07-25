@@ -37,8 +37,11 @@ public class BoardController {
     @GetMapping("/boardmain")
     public String boardList(Model model, Principal principal) {
         List<BoardDTO> boards = boardService.getAllBoards();
-        List<FriendInfoDTO> friends = friendService.getFriends(memberService.findUserById(principal.getName()).getUsername());
-        model.addAttribute("friends", friends);
+        List<String> requestusers = friendService.getRequestlist(principal.getName());
+        List<String> sendusers = friendService.getSendlist(principal.getName());
+
+        model.addAttribute("sendusers", sendusers);
+        model.addAttribute("requestusers", requestusers);
         model.addAttribute("boards", boards);
         return "boardmain";
     }

@@ -3,6 +3,8 @@ package com.example.demo.mapper;
 import com.example.demo.dto.FriendDTO;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface AddFriendMapper {
     @Select("SELECT * FROM friend WHERE sender=#{sender} AND receiver=#{receiver}")
@@ -16,4 +18,10 @@ public interface AddFriendMapper {
 
     @Update("UPDATE friend SET receiver_accept = #{accept} WHERE sender = #{sender} AND receiver = #{receiver}")
     void updateFriendAccept(@Param("sender") String sender, @Param("receiver") String receiver, @Param("accept") int accept);
+
+    @Select("SELECT sender FROM friend WHERE receiverid=#{receiver} AND receiver_accept=0")
+    List<String> findRequestUser(String receiver);
+
+    @Select("SELECT receiver FROM friend WHERE senderid=#{sender} AND receiver_accept=0")
+    List<String> findSendUser(String sender);
 }

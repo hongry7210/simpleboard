@@ -66,4 +66,12 @@ public class FriendService {
     public List<FriendInfoDTO> getFriends(String username){
         return mm.findFriendUsernames(username);
     }
+
+    public List<String> getRequestlist(String username){
+        return am.findRequestUser(username);
+    }
+
+    public List<String> getSendlist(String username){
+        return am.findSendUser(username);
+    }
 }

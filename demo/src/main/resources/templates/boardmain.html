@@ -145,21 +145,38 @@
 
 <!-- 친구목록 버튼 및 팝오버(항상 최상단, 오른쪽 고정) -->
 <button id="friend-btn" onclick="toggleFriendDropdown()" class="friend-btn-pop">
-    친구목록
+    친구 현황
 </button>
 <div id="friend-popover" class="friend-popover" style="display:none;">
     <div class="friend-popover-header">
-        <span>친구 목록</span>
+        <span>친구 현황</span>
         <button onclick="toggleFriendDropdown()" class="friend-popover-close">&times;</button>
     </div>
     <div class="friend-popover-content">
-        <ul>
-            <li th:each="friend : ${friends}">
-                <span th:text="${friend.friendname}"></span>
-            </li>
-        </ul>
-        <div th:if="${#lists.isEmpty(friends)}" style="color:#888;text-align:center;">
-            친구가 없습니다.
+        <!-- 친구 요청 받은 목록 -->
+        <div>
+            <b>받은 친구 요청</b>
+            <ul>
+                <li th:each="user : ${requestusers}">
+                    <span th:text="${user}"></span>
+                </li>
+            </ul>
+            <div th:if="${#lists.isEmpty(requestusers)}" style="color:#888;text-align:center;">
+                받은 친구 요청이 없습니다.
+            </div>
+        </div>
+        <hr style="margin:12px 0;">
+        <!-- 내가 보낸 친구 요청 목록 -->
+        <div>
+            <b>보낸 친구 요청</b>
+            <ul>
+                <li th:each="user : ${sendusers}">
+                    <span th:text="${user}"></span>
+                </li>
+            </ul>
+            <div th:if="${#lists.isEmpty(sendusers)}" style="color:#888;text-align:center;">
+                보낸 친구 요청이 없습니다.
+            </div>
         </div>
     </div>
 </div>
