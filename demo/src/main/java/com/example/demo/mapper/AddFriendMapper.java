@@ -10,7 +10,7 @@ public interface AddFriendMapper {
     @Select("SELECT * FROM friend WHERE sender=#{sender} AND receiver=#{receiver}")
     FriendDTO findFriendRequest(String sender, String receiver);
 
-    @Insert("INSERT INTO friend (sender, receiver, senderid, receiverid) VALUES (#{sender}, #{receiver}, #{senderid}, #{receiverid})")
+    @Insert("INSERT INTO friend (sender, receiver, senderid, receiverid, receiver_accept) VALUES (#{sender}, #{receiver}, #{senderid}, #{receiverid}, 0)")
     void insertFriendRequest(String sender, String receiver, String senderid, String receiverid);
 
     @Delete("Delete From friend Where sender=#{sender} AND receiver=#{receiver}")

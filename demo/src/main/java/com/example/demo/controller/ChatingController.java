@@ -63,8 +63,7 @@ public class ChatingController {
         model.addAttribute("friend", friend);
         model.addAttribute("friendName", friendName);
         model.addAttribute("chatHistory", chatHistory);
+        chatHistory.forEach(msg -> System.out.println(msg.getSendTime()));
         return "chatroom";  // templates/chatroom.html
     }
-
-
 }

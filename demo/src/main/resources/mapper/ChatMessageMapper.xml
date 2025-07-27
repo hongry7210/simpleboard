@@ -12,12 +12,16 @@
         (#{sender}, #{receiver}, #{content}, #{sendTime})
     </insert>
 
-    <select id="selectMessagesBetweenUsers" resultType="com.example.demo.dto.ChatMessageDTO">
+    <select id="selectMessagesBetweenUsers" resultMap="ChatMessageResultMap">
         SELECT *
         FROM chatmassage
         WHERE (sender = #{user1} AND receiver = #{user2})
         OR (sender = #{user2} AND receiver = #{user1})
         ORDER BY id ASC
     </select>
+
+    <resultMap id="ChatMessageResultMap" type="com.example.demo.dto.ChatMessageDTO">
+        <result column="time" property="sendTime"/> <!-- 여기서 매핑 -->
+    </resultMap>
 
 </mapper>

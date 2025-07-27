@@ -134,9 +134,12 @@
         }
         .bubble {
             position: relative;
-            display: inline-flex;
+            display: flex; /* inline-flex → flex */
+            justify-content: space-between;  /* 텍스트 ↔ 시간 간격 확보 */
             align-items: flex-end;
-            /* 기존 스타일 유지 */
+            white-space: pre-wrap;  /* 줄바꿈 허용 */
+            word-break: break-word;
+            gap: 8px;  /* 텍스트와 시간 사이 여백 */
         }
 
         .message-me .bubble-time {
@@ -157,6 +160,11 @@
             align-self: flex-end;
             order: 1;  /* bubble에서 맨 뒤(오른쪽) */
         }
+
+        .bubble-time {
+            white-space: nowrap; /* 줄바꿈 안 되도록 고정 */
+            flex-shrink: 0;       /* 공간 없어도 줄어들지 않음 */
+        }
     </style>
 </head>
 <body>
@@ -174,7 +182,6 @@
                         <span th:text="${msg.content}"></span>
                         <span th:if="${msg.sender != me}" class="bubble-time" th:text="' ' + ${#temporals.format(msg.sendTime, 'a hh:mm')}"></span>
                     </span>
-                    <div class="msg-time" th:text="${#temporals.format(msg.sendTime, 'a hh:mm')}"></div>
                 </li>
             </ul>
         </div>
@@ -183,7 +190,6 @@
             <button type="button" id="send-btn">전송</button>
         </form>
     </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.1.1/bundles/stomp.umd.min.js"></script>
 <script th:inline="javascript">
