@@ -74,4 +74,8 @@ public class FriendService {
     public List<String> getSendlist(String username){
         return am.findSendUser(username);
     }
+
+    public boolean deleteFriend(String sender, String receiver){
+        return am.deleteFriend(sender, receiver);
+    }
 }

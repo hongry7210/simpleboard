@@ -13,8 +13,21 @@
         .userinfo-row label { flex: 0 0 90px; font-weight: 600; color: #567aa7;}
         .userinfo-row span { flex: 1; color: #224677;}
         .user-btns { margin-top: 30px; text-align: center;}
-        .friend-btn, .message-btn { background: #4682b4; color: #fff; border-radius: 7px; border: none; font-weight:600; padding: 9px 18px; cursor: pointer; margin-right: 8px;}
+        .friend-btn, .message-btn { background: #4682b4; color: #fff; font-weight:600;cursor: pointer;}
         .friend-btn:hover, .message-btn:hover { background: #224677;}
+
+    .friend-btn:hover, .message-btn:hover {
+        background: #224677;
+    }
+
+    /* 친구 삭제 버튼만의 스타일 오버라이딩 */
+    .delete-btn {
+        background: red !important;
+        color: #fff !important;
+    }
+    .delete-btn:hover {
+        background: darkred !important;
+    }
     </style>
 </head>
 <body>
@@ -29,9 +42,11 @@
         <label>이름</label>
         <span th:text="${user.username}"></span>
     </div>
-    <!-- 여기에 필요시 이메일, 가입일 등도 추가 가능 -->
 
     <button id="friend-btn"></button>
+    <button id="delete-friend-btn" style="display: none;" class="friend-btn delete-btn">
+        친구 삭제
+    </button>
 </div>
 <script>
     const friendStatus = [[${friendStatus}]]
@@ -84,10 +99,13 @@
     // 버튼 상태 전환 함수
     function updateFriendBtn(friendStatus) {
         const btn = document.getElementById('friend-btn');
+        const deleteBtn = document.getElementById('delete-friend-btn');
         btn.disabled = false;
         btn.style.background = '';
         btn.style.color = '';
         btn.onclick = null;
+
+        deleteBtn.style.display = 'none'; // 기본 숨김
 
         switch(friendStatus) {
             case 0:
@@ -106,6 +124,9 @@
                 btn.disabled = true;
                 btn.style.background = "#eee";
                 btn.style.color = "#bbb";
+
+                deleteBtn.style.display = 'inline-block';
+                deleteBtn.onclick = deleteFriend;
                 break;
             case 4:
                 btn.innerText = "친구 수락";
@@ -139,6 +160,27 @@
             alert("네트워크 오류입니다.");
         });
     }
+
+    function deleteFriend() {
+        fetch("/api/delete-friend", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({ sender, receiver })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.result === "ok") {
+                alert("친구 삭제를 완료하였습니다.");
+                updateFriendBtn(0);
+            } else {
+                alert(data.msg || "친구 삭제 요청 실패");
+            }
+        })
+    }
+
 
     window.onload = function() {
         updateFriendBtn(friendStatus);

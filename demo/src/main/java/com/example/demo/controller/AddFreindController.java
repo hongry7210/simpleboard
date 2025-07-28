@@ -70,4 +70,13 @@ public class AddFreindController {
         return resp;
     }
 
+    @PostMapping("/api/delete-friend")
+    @ResponseBody
+    public Map<String, Object> deleteFriend(@RequestBody Map<String, String> payload) {
+        boolean result = fs.deleteFriend(payload.get("sender"), payload.get("receiver"));
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("result", result ? "ok" : "fail");
+        if (!result) resp.put("msg", "친구 삭제를 완료하였습니다.");
+        return resp;
+    }
 }

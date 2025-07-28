@@ -46,8 +46,6 @@ public class ChatingController {
         // 현재 로그인된 사용자 이름
         String username = principal.getName();
         MemberDTO user = memberService.findUserById(username);
-        // 해당 사용자의 친구 목록 조회 (이름만 리스트로)
-        //List<String> friends = friendService.getFriends(user.getUsername());
         List<FriendInfoDTO> friends = friendService.getFriends(user.getUsername());
         model.addAttribute("friends", friends);
         model.addAttribute("me", username); // 본인 정보도 전달
@@ -63,7 +61,6 @@ public class ChatingController {
         model.addAttribute("friend", friend);
         model.addAttribute("friendName", friendName);
         model.addAttribute("chatHistory", chatHistory);
-        chatHistory.forEach(msg -> System.out.println(msg.getSendTime()));
         return "chatroom";  // templates/chatroom.html
     }
 }

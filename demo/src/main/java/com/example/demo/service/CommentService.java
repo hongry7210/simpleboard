@@ -9,5 +9,5 @@ public interface CommentService {
 
     List<CommentDTO> getCommentsByBoardId(int boardId);
     void insertComment(CommentDTO comment);
-    public List<CommentDTO> getCommentsByWriter(String writer);
+    List<CommentDTO> getCommentsByWriter(String writer);
 }

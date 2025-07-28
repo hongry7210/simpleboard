@@ -31,10 +31,10 @@ public class ChatMessageService {
     }
 
     public void sendChatMessage(ChatMessageDTO message) {
-        // 1. DB 저장 (이 부분은 실제 저장 코드로 대체)
+        // 1. DB 저장
         chatMessageMapper.insertMessage(message);
 
-        // 2. 본인에게 메시지 전송 (옵션)
+        // 2. 본인에게 메시지 전송
         messagingTemplate.convertAndSendToUser(
                 message.getSender(),
                 "/queue/messages",

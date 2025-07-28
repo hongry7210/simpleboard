@@ -24,4 +24,15 @@ public interface AddFriendMapper {
 
     @Select("SELECT receiver FROM friend WHERE senderid=#{sender} AND receiver_accept=0")
     List<String> findSendUser(String sender);
+
+    @Delete("""
+    DELETE FROM friend WHERE receiver_accept = 1
+      AND (
+        (sender = #{sender} AND receiver = #{receiver}) 
+        OR 
+        (sender = #{receiver} AND receiver = #{sender})
+      )
+    """)
+    boolean deleteFriend(String sender, String receiver);
+
 }
