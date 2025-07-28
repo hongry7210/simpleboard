@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -72,6 +73,7 @@ public class BoardController {
         // 3. Model에 데이터 담기
         model.addAttribute("parentComments", parentComments);
         model.addAttribute("board", board);
+        model.addAttribute("username", memberService.findUserById(principal.getName()).getUsername());
 
         // 로그인한 사용자명(없으면 null)
         if (principal != null) {
@@ -94,6 +96,12 @@ public class BoardController {
     @PostMapping("/board/write")
     public String writeProc(BoardDTO board) {
         boardService.insertBoard(board);
+        return "redirect:/boardmain";
+    }
+
+    @PostMapping("/board/delete/{id}")
+    public String deleteBoard(@PathVariable int id) {
+        boardService.deleteBoard(id);
         return "redirect:/boardmain";
     }
 

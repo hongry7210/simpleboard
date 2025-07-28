@@ -14,5 +14,9 @@ public interface BoardMapper {
     // 글쓰기
     void insertBoard(BoardDTO board);
 
+    // 글찾기
     List<BoardDTO> findBoardsByWriter(String writer);
+
+    // 글삭제
+    void deleteBoard(int id);
 }

@@ -28,4 +28,10 @@
         ORDER BY created_at DESC
     </select>
 
+    <delete id="deleteBoard">
+        DELETE
+        FROM board
+        WHERE id = #{id}
+        LIMIT 1
+    </delete>
 </mapper>

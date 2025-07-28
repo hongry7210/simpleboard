@@ -193,6 +193,14 @@
         </tr>
     </table>
 
+    <div th:if="${board.writer == username}" style="text-align: right; margin-top: 10px;">
+        <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post" style="display:inline;">
+            <button type="submit" style="background:red; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">
+                게시글 삭제
+            </button>
+        </form>
+    </div>
+
     <!-- 댓글 영역 -->
     <div class="comment-section">
         <div class="comment-title">댓글</div>

@@ -30,4 +30,9 @@ public class BoardServiceImpl implements BoardService {
     public List<BoardDTO> getBoardsByWriter(String writer) {
         return boardMapper.findBoardsByWriter(writer);
     }
+
+    @Override
+    public void deleteBoard(int id) {
+        boardMapper.deleteBoard(id);
+    }
 }
