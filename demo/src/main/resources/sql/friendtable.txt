@@ -1,9 +1,0 @@
-CREATE TABLE friend (
-    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
-    sender        VARCHAR(50) NOT NULL,
-    receiver      VARCHAR(50) NOT NULL,
-    sender_cancel TINYINT(1) DEFAULT 0,
-    receiver_accept TINYINT(1) DEFAULT 0,
-    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_friend (sender, receiver)
-);
