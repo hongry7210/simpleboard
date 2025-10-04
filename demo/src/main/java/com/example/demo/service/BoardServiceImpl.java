@@ -35,4 +35,9 @@ public class BoardServiceImpl implements BoardService {
     public void deleteBoard(int id) {
         boardMapper.deleteBoard(id);
     }
+
+    @Override
+    public void deleteComment(int id) {
+        boardMapper.deleteComment(id);
+    }
 }
