@@ -18,4 +18,7 @@ public interface BoardService {
 
     // 글 삭제
     void deleteBoard(int id);
+
+    // 댓글 삭제
+    void deleteComment(int id);
 }

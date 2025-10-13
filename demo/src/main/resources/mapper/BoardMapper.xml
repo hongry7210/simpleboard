@@ -34,4 +34,11 @@
         WHERE id = #{id}
         LIMIT 1
     </delete>
+
+    <delete id="deleteComment">
+        DELETE
+        FROM comment
+        WHERE board_id = #{id}
+    </delete>
+    
 </mapper>
