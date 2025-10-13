@@ -9,3 +9,5 @@ public class FriendInfoDTO {
     private String friendname;
     private String friendid;
 }
+
+// FriendDTO 객체의 friend TABLE 사용

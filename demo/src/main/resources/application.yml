@@ -7,7 +7,21 @@ spring:
     url: jdbc:mysql://localhost:3306/myboard?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: boarduser
     password: xnths8686
-
+  # --- ↓↓↓ 여기에 메일 설정 추가 ↓↓↓ ---
+  mail:
+    host: smtp.gmail.com  # 사용하려는 SMTP 서버 주소 (예: Gmail)
+    port: 587
+    username: mailserver7210@gmail.com
+    password: vkmu qqcb opsk hsri
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: "*" 
+  # --- ↑↑↑ 여기까지 추가 ---
 jpa:
   hibernate:
     ddl-auto: update
