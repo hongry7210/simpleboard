@@ -15,4 +15,5 @@ public interface MemberMapper {
     List<String> findUsernamesByPartial(@Param("query") String query);
     MemberDTO findUserByUsername(String username);
     List<FriendInfoDTO> findFriendUsernames(@Param("username") String username);
+    String findUserIdByEmail(String useremail);
 }

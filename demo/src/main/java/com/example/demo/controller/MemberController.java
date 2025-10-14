@@ -4,6 +4,7 @@ import com.example.demo.dto.CommentDTO;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.CommentService;
 import com.example.demo.dto.MemberDTO;
+import com.example.demo.dto.VerificationDTO;
 import com.example.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -116,8 +115,9 @@ public class MemberController {
         return ms.findUsernamesByQuery(q);
     }
 
-    @GetMapping("/forgotid")
-    public String forgotid() {
+     @GetMapping("/forgotid")
+    public String forgotid(Model model) {
+        model.addAttribute("userid", new VerificationDTO());
         return "forgotid";
     }
 

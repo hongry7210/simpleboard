@@ -18,7 +18,7 @@ public class VerificationDTO {
 /*
  * CREATE TABLE verification (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,         
-    userid varchar(20) NOT NULL UNIQUE,            
+    userid varchar(50) NOT NULL UNIQUE,            
     verifyCode VARCHAR(10),                           
     expireAt DATETIME,                            
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP

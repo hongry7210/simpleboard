@@ -47,5 +47,10 @@
         AND f.receiver_accept = 1
     </select>
 
+    <select id="findUserIdByEmail" parameterType="string" resultType="string">
+        SELECT userid
+        FROM user
+        WHERE useremail = #{useremail}
+    </select>
 
 </mapper>

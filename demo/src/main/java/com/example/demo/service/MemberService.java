@@ -37,4 +37,7 @@ public class MemberService {
         return mm.findUserByUsername(username);
     }
 
+    public String findUserIdByEmail(String useremail) {
+        return mm.findUserIdByEmail(useremail);
+    }
 }

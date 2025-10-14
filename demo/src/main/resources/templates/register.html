@@ -279,8 +279,8 @@
         const userid = document.getElementById('userid').value; //아이디
         const emailMsg = document.getElementById('emailVerificationMsg'); 
 
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(useremail)) {
+        const emailRule = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRule.test(useremail)) {
             emailMsg.innerText = '올바른 이메일 형식이 아닙니다.';
             emailMsg.style.color = '#d63a3a';
             isVerificationEmailSent = false;
@@ -312,8 +312,8 @@
             method: 'POST'
         })
         .then(response => {
-            if (response.ok) { // HTTP 상태 코드
-                return response.text();
+            if (response.ok) { 
+                return response.text(); //then 안에서 return 되면 다음 .then() 블록으로 전달
             }
             document.getElementById('userid').readOnly = false;
             document.getElementById('username').readOnly = false;
@@ -367,7 +367,7 @@
         const fetchURL = '/api/verify-code?userid=' + encodeURIComponent(userid) + '&code=' + encodeURIComponent(code);
 
         fetch(fetchURL, { method: 'POST' })
-        .then(res => res.json()) // 서버는 true 또는 false를 반환해야 함
+        .then(res => res.json())
         .then(isSuccess => {
             if (isSuccess) {
                 codeMsg.innerText = '인증되었습니다!';
@@ -380,7 +380,7 @@
                 codeMsg.style.color = '#d63a3a';
                 isCodeVerified = false;
             }
-            updateSubmitButton(); // 👈 인증 시도 후에만 회원가입 버튼 상태 업데이트
+            updateSubmitButton(); //인증 시도 후에만 회원가입 버튼 상태 업데이트
         })
         .catch(error => {
             console.error('Error:', error);
