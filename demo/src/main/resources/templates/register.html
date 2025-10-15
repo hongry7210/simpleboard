@@ -170,7 +170,7 @@
                 <label for="verificationCodeInput">인증번호</label>
                 <div class="input-with-button">
                     <input type="text" id="verificationCodeInput" placeholder="6자리 숫자를 입력하세요" maxlength="6">
-                    <button type="button" onclick="verifyCode()">인증 확인</button>
+                    <button type="button" id="confirmVerify" onclick="verifyCode()">인증 확인</button>
                 </div>
                 <span id="codeVerificationMsg"></span>
             </div>
@@ -267,13 +267,12 @@
         }
     }
 
-    function sendVerificationEmail() {
+    async function sendVerificationEmail() {
         
         document.getElementById('userid').readOnly = true;
         document.getElementById('username').readOnly = true;
         document.getElementById('useridCheckBtn').disabled = true;
         document.getElementById('usernameCheckBtn').disabled = true;
-        document.getElementById('verificationCodeContainer').style.display = 'block';
         
         const useremail = document.getElementById('useremail').value; //이메일
         const userid = document.getElementById('userid').value; //아이디
@@ -292,18 +291,33 @@
             updateSubmitButton();
             return; // 형식이 틀리면 여기서 함수 종료
         }
-        if (!useremail || !userid) {
-            emailMsg.innerText = '아이디와 이메일을 입력하세요.';
+        // if (!useremail || !userid) {
+        //     emailMsg.innerText = '아이디와 이메일을 입력하세요.';
+        //     emailMsg.style.color = '#d63a3a';
+        //     isVerificationEmailSent = false;
+        //     document.getElementById('userid').readOnly = false;
+        //     document.getElementById('username').readOnly = false;
+        //     document.getElementById('useridCheckBtn').disabled = false;
+        //     document.getElementById('usernameCheckBtn').disabled = false;
+        //     document.getElementById('verificationCodeContainer').style.display = 'none';
+        //     updateSubmitButton();
+        //     return;
+        // }
+
+        const isEmailDuplicated = await checkduplicateemail();
+        if(isEmailDuplicated == true) {
+            emailMsg.innerText = '중복된 이메일이 존재합니다. 다른 이메일을 사용해 주세요.';
             emailMsg.style.color = '#d63a3a';
-            isVerificationEmailSent = false;
+            console.log('중복 이메일 존재');
             document.getElementById('userid').readOnly = false;
             document.getElementById('username').readOnly = false;
             document.getElementById('useridCheckBtn').disabled = false;
             document.getElementById('usernameCheckBtn').disabled = false;
             document.getElementById('verificationCodeContainer').style.display = 'none';
-            updateSubmitButton();
-            return;
+            return ;
         }
+
+        document.getElementById('verificationCodeContainer').style.display = 'block';
 
         const fetchURL = '/send-mail?email=' + encodeURIComponent(useremail) + '&userid=' + encodeURIComponent(userid);
 
@@ -375,6 +389,8 @@
                 isCodeVerified = true;
                 // 성공하면 더 이상 수정 못하게 비활성화
                 document.getElementById('verificationCodeInput').disabled = true;
+                document.getElementById('confirmVerify').disabled = true;
+                document.getElementById('emailSendBtn').disabled = true;
             } else {
                 codeMsg.innerText = '인증번호가 올바르지 않습니다.';
                 codeMsg.style.color = '#d63a3a';
@@ -389,6 +405,34 @@
             isCodeVerified = false;
             updateSubmitButton();
         });
+    }
+
+    async function checkduplicateemail(){ // true면 중복인 이메일
+        const useremail = document.getElementById('useremail').value;
+        console.log(useremail);
+
+        try {
+
+            const response = await fetch('/api/find-id-with-email?email=' + encodeURIComponent(useremail), {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                throw new Error('서버 오류');
+            }
+
+            const text = await response.text();
+            console.log(text.length);
+            if(text == ""){ // 이메일 존재하지 않으면 
+                return false;
+            }
+            else{ //이메일 존재하면
+                return true;
+            }
+        }
+        catch(error){
+            return true;
+        }
     }
 
     window.onload = function() {

@@ -77,6 +77,7 @@ public class MailController {
 
     @PostMapping("/api/find-id-with-email") //이메일을 이용하여 아이디를 찾기
     public String findIdWithEmail(@RequestParam("email") String email) {
+        System.out.println(memberService.findUserIdByEmail(email));
         return memberService.findUserIdByEmail(email);
     }
 }

@@ -129,6 +129,9 @@
 
         function sendemail() {
 
+            emailMsg.innerText = ' ';
+            document.getElementById('noUserExist').innerText = " ";
+
             const useremail = document.getElementById('useremail').value;
             const emailRule = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             const code = 1;
@@ -136,6 +139,7 @@
             if (!emailRule.test(useremail)) {
                 emailMsg.innerText = '올바른 이메일 형식이 아닙니다.';
                 emailMsg.style.color = '#d63a3a';
+                document.getElementById('noUserExist').innerText = " ";
                 return ;
             }
             
@@ -173,7 +177,7 @@
                     document.getElementById("verificationCodeInput").style.display='block';
                 })
                 .catch(error => {
-                    emailMsg.innerText = '메일 발송에 실패했습니다. 올바른 이메일을 입력해주세요.';
+                    emailMsg.innerText = '메일 발송에 실패했습니다.';
                     emailMsg.style.color = '#d63a3a';
                 });
         }
