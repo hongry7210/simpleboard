@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.CommentDTO;
-import com.example.demo.dto.FriendInfoDTO;
 import com.example.demo.dto.MemberDTO;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.CommentService;
@@ -67,7 +66,7 @@ public class BoardController {
             List<CommentDTO> children = allComments.stream()
                     .filter(c -> c.getParentcomment_id() == parent.getId())
                     .collect(Collectors.toList());
-            parent.setChildren(children); // children 필드 setter 사용
+            parent.setChildren(children);
         }
 
         // 3. Model에 데이터 담기

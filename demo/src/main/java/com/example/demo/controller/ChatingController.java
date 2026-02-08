@@ -1,16 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ChatMessageDTO;
-import com.example.demo.dto.FriendDTO;
 import com.example.demo.dto.FriendInfoDTO;
 import com.example.demo.dto.MemberDTO;
-import com.example.demo.mapper.AddFriendMapper;
 import com.example.demo.service.ChatMessageService;
 import com.example.demo.service.FriendService;
 import com.example.demo.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,9 +28,6 @@ public class ChatingController {
 
     @Autowired
     private ChatMessageService chatMessageService;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat.send") // /app/chat.send로 전송됨
     @SendToUser("/queue/messages") // 본인에게만, 브로드캐스트는 @SendTo("/topic/방이름")
